@@ -7,9 +7,9 @@ using UserService.Domain.Results;
 
 namespace UserService.Application.Services;
 
-public class UserService(
+public class UserServices(
     IUserRepository userRepository,
-    ILogger<UserService> logger) : IUserService
+    ILogger<UserServices> logger) : IUserService
 {
     public async Task<ServiceResult<UserDto>> GetUserDetails(Guid userId, CancellationToken cancellationToken = default)
     {

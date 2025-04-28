@@ -11,7 +11,7 @@ namespace UserService.Application.Services;
 public class AuthService(
     IUserRepository userRepository,
     ITokenProvider tokenProvider,
-    ILogger<UserService> logger) : IAuthService
+    ILogger<AuthService> logger) : IAuthService
 {
     public async Task<ServiceResult<LoginResponseModel>> Login(
         LoginRequestModel request,

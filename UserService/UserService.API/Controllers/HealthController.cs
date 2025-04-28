@@ -11,7 +11,6 @@ namespace UserService.API.Controllers;
 public class HealthController : ControllerBase
 {
     [HttpGet]
-    [Route("health")]
     public ActionResult<ServiceResult> Health()
     {
         var response = new ServiceResult(HttpStatusCode.OK, "Api is healthy");
