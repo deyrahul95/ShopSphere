@@ -36,7 +36,7 @@ public class AuthService(
                 return AuthResults<LoginResponseModel>.InvalidCredentials;
             }
 
-            var token = await tokenProvider.GenerateAccessToken(user);
+            var token = tokenProvider.GenerateAccessToken(user);
 
             return AuthResults<LoginResponseModel>.LoggedIn(data: new LoginResponseModel(Token: token));
         }

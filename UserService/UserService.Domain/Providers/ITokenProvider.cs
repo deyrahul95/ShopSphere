@@ -4,5 +4,5 @@ namespace UserService.Domain.Providers;
 
 public interface ITokenProvider
 {
-    Task<string> GenerateAccessToken(User user);
+    string GenerateAccessToken(User user);
 }
