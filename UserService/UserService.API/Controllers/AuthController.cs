@@ -17,7 +17,9 @@ public class AuthController(IAuthService authService, ILogger<AuthController> lo
         [FromBody] LoginRequestModel request,
         CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Start processing login request. {@request}", request);
+        logger.LogInformation(
+            "Start processing login request. User Name: {username}",
+            request.Username);
 
         if (ModelState.IsValid is false)
         {
@@ -29,7 +31,10 @@ public class AuthController(IAuthService authService, ILogger<AuthController> lo
             request: request,
             cancellationToken: cancellationToken);
 
-        logger.LogInformation("Stop processing login request. {@response}", response);
+        logger.LogInformation(
+            "Stop processing login request. User Name: {username}, Status Code: {code}",
+            request.Username,
+            response.StatusCode);
 
         return StatusCode((int)response.StatusCode, response);
     }
