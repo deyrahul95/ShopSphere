@@ -11,8 +11,7 @@ public static class DtoMapper
             Id: user.Id,
             Name: user.Name,
             Email: user.Email,
-            Address: user.Address ?? "N/A",
-            LastUpdated: user.UpdatedAt
+            Address: user.Address ?? "N/A"
         );
     }
 }
