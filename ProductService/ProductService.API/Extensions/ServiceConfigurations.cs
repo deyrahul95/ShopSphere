@@ -1,5 +1,6 @@
 using ProductService.API.Middlewares;
 using ProductService.Application.Extensions;
+using ProductService.Infrastructure.Extensions;
 
 namespace ProductService.API.Extensions;
 
@@ -7,7 +8,7 @@ public static class ServiceConfigurations
 {
      public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // services.AddInfrastructureServices(configuration);
+        services.AddInfrastructureServices(configuration);
         services.AddApplicationServices();
 
         return services;
@@ -17,7 +18,7 @@ public static class ServiceConfigurations
     {
         app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-        // app.UseInfrastructureServices();
+        app.UseInfrastructureServices();
         
         return app;
     }

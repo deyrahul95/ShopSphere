@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Net;
 
 namespace ProductService.Application.Results;
@@ -15,6 +14,6 @@ public static class ProductResults<T> where T : class
 
     public static ServiceResult<T> Success(T data) => new(
         statusCode: HttpStatusCode.OK,
-        message: data is IList ? "Products fetched successfully" : "Product fetched successfully",
+        message: "Product fetched successfully",
         data: data);
 }

@@ -1,0 +1,51 @@
+using ProductService.Domain.Entities;
+using ProductService.Domain.Repositories;
+using ProductService.Domain.Utils;
+using ProductService.Infrastructure.DB;
+
+namespace ProductService.Infrastructure.Repositories;
+
+public class InMemoryProductRepository : IProductRepository
+{
+    public async Task<Product?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        await Task.Delay(10, cancellationToken);
+
+        var product = InMemoryDB.Products.FirstOrDefault(x => x.Id == id);
+
+        return await Task.FromResult(product);
+    }
+
+    public async Task<PaginatedResult<Product>> SearchProductsAsync(ProductSearchFilters searchFilters, CancellationToken cancellationToken = default)
+    {
+        await Task.Delay(50, cancellationToken);
+
+        var query = InMemoryDB.Products.AsQueryable();
+
+        if (string.IsNullOrEmpty(searchFilters.Name) is false)
+        {
+            query = query.Where(item => item.Name.Contains(
+                searchFilters.Name,
+                StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (string.IsNullOrEmpty(searchFilters.Category) is false)
+        {
+            query = query.Where(item => item.Category.Contains(
+                searchFilters.Category,
+                StringComparison.OrdinalIgnoreCase));
+        }
+
+        var totalItems = query.Count();
+        var items = query
+            .Skip((searchFilters.PageNumber - 1) * searchFilters.PageSize)
+            .Take(searchFilters.PageSize)
+            .ToList();
+
+        return new PaginatedResult<Product>(
+            pageNumber: searchFilters.PageNumber,
+            pageSize: searchFilters.PageSize,
+            totalItems: totalItems,
+            items: items);
+    }
+}

@@ -54,7 +54,7 @@ public class ProductsService(
             logger.LogInformation("Product search filters. Filters: {@SearchFilters}", searchFilters);
 
             var paginatedResult = await productRepository.SearchProductsAsync(
-                searchParams: searchFilters,
+                searchFilters: searchFilters,
                 cancellationToken: cancellationToken);
 
             var result = new PaginatedResult<ProductDto>(
