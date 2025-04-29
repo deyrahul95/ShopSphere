@@ -1,10 +1,10 @@
 using Microsoft.Extensions.Logging;
 using UserService.Application.Models;
+using UserService.Application.Results;
 using UserService.Application.Services.Interfaces;
 using UserService.Domain.Entities;
 using UserService.Domain.Providers;
 using UserService.Domain.Repositories;
-using UserService.Domain.Results;
 
 namespace UserService.Application.Services;
 

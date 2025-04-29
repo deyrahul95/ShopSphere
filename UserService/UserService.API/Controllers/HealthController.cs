@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UserService.Domain.Results;
+using UserService.Application.Results;
 
 namespace UserService.API.Controllers;
 

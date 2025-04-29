@@ -1,5 +1,5 @@
 using UserService.Application.DTOs;
-using UserService.Domain.Results;
+using UserService.Application.Results;
 
 namespace UserService.Application.Services.Interfaces;
 

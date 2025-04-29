@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Application.Models;
+using UserService.Application.Results;
 using UserService.Application.Services.Interfaces;
-using UserService.Domain.Results;
 
 namespace UserService.API.Controllers;
 

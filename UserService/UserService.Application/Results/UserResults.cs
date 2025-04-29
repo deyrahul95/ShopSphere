@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace UserService.Domain.Results;
+namespace UserService.Application.Results;
 
 public static class UserResults<T> where T : class
 {

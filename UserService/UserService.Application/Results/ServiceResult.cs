@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace UserService.Domain.Results;
+namespace UserService.Application.Results;
 
 public class ServiceResult(HttpStatusCode statusCode, string message)
 {

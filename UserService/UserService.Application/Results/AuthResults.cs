@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace UserService.Domain.Results;
+namespace UserService.Application.Results;
 
 public static class AuthResults<T> where T : class
 {
