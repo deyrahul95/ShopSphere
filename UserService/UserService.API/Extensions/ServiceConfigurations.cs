@@ -1,3 +1,4 @@
+using UserService.API.Middlewares;
 using UserService.Application.Extensions;
 using UserService.Infrastructure.Extensions;
 
@@ -15,6 +16,8 @@ public static class ServiceConfigurations
 
     public static IApplicationBuilder UseApiServices(this IApplicationBuilder app)
     {
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
+
         app.UseInfrastructureServices();
         
         return app;

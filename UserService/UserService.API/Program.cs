@@ -14,8 +14,8 @@ var app = builder.Build();
 
 app.UseSerilogRequestLogging();
 
-app.MapControllers();
-
 app.UseApiServices();
+
+app.MapControllers();
 
 app.Run();
