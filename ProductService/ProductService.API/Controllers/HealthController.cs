@@ -1,5 +1,7 @@
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProductService.Application.Results;
 
 namespace ProductService.API.Controllers;
 
@@ -9,8 +11,10 @@ namespace ProductService.API.Controllers;
 public class HealthController : ControllerBase
 {
     [HttpGet]
-    public IActionResult Health()
+    public ActionResult<ServiceResult> Health()
     {
-        return Ok("Api is healthy");
+        var response = new ServiceResult(HttpStatusCode.OK, "Api is healthy");
+
+        return Ok(response);
     }
 }
