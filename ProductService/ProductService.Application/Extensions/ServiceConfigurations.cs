@@ -6,9 +6,9 @@ namespace ProductService.Application.Extensions;
 
 public static class ServiceConfigurations
 {
-     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        services.AddScoped<IProductService, ProductsService>();
+        services.AddScoped<IProductsService, ProductsService>();
 
         return services;
     }

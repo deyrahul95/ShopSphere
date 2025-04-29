@@ -12,7 +12,7 @@ namespace ProductService.Application.Services;
 
 public class ProductsService(
     IProductRepository productRepository,
-    ILogger<ProductsService> logger) : IProductService
+    ILogger<ProductsService> logger) : IProductsService
 {
     public async Task<ServiceResult<ProductDto>> GetProduct(Guid id, CancellationToken cancellationToken = default)
     {
@@ -38,7 +38,7 @@ public class ProductsService(
         }
     }
 
-    public async Task<ServiceResult<PaginatedResult<ProductDto>>> GetProductsAsync(ProductSearchRequest request, CancellationToken cancellationToken = default)
+    public async Task<ServiceResult<PaginatedResult<ProductDto>>> SearchProducts(ProductSearchRequest request, CancellationToken cancellationToken = default)
     {
         try
         {
