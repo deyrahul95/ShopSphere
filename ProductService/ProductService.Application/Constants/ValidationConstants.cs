@@ -1,6 +1,6 @@
 namespace ProductService.Application.Constants;
 
-public static class ValidationConstants
+public class ValidationConstants
 {
     public const int MinPageNumber = 1;
     public const int MaxPageNumber = 100;

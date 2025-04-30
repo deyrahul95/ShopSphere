@@ -1,6 +1,6 @@
 namespace UserService.Domain.Constants;
 
-public static class DomainConstants
+public class DomainConstants
 {
     public const int DefaultAccessTokenExpiryInDays = 1; 
 }
