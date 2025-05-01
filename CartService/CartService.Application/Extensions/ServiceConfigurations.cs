@@ -29,6 +29,8 @@ public static class ServiceConfigurations
         .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
         .AddResilienceHandler(HttpClientConstants.ProductPipelineName, ConfigureDefaultResiliencePipeline);
 
+        services.AddScoped<ICartsService, CartsService>();
+
         return services;
     }
 

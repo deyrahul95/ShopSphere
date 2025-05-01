@@ -1,3 +1,5 @@
+using System.Net;
+using CartService.Application.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,8 +11,10 @@ namespace CartService.API.Controllers;
 public class HealthController : ControllerBase
 {
     [HttpGet]
-    public IActionResult HealthCheck()
+    public ActionResult<ServiceResult> Health()
     {
-        return Ok("Api is healthy");
+        var response = new ServiceResult(HttpStatusCode.OK, "Api is healthy");
+
+        return Ok(response);
     }
 }

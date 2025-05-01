@@ -11,11 +11,11 @@ using Microsoft.Extensions.Logging;
 
 namespace CartService.Application.Services;
 
-public class CartService(
+public class CartsService(
     ICartRepository cartRepository,
     IUserHttpClient userHttpClient,
     IProductHttpClient productHttpClient,
-    ILogger<CartService> logger) : ICartService
+    ILogger<CartsService> logger) : ICartsService
 {
     public async Task<ServiceResult<CartDto>> AddToCart(
         Guid userId,

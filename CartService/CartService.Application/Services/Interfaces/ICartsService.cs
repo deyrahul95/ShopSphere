@@ -4,7 +4,7 @@ using CartService.Application.Results;
 
 namespace CartService.Application.Services.Interfaces;
 
-public interface ICartService
+public interface ICartsService
 {
     Task<ServiceResult<CartDto>> AddToCart(
         Guid userId,
