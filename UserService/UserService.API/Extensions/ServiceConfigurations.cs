@@ -1,3 +1,6 @@
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using UserService.API.Middlewares;
 using UserService.Application.Extensions;
 using UserService.Infrastructure.Extensions;
@@ -10,6 +13,20 @@ public static class ServiceConfigurations
     {
         services.AddInfrastructureServices(configuration);
         services.AddApplicationServices();
+
+        services.AddOpenTelemetry()
+            .ConfigureResource(resource => resource.AddService("UserService"))
+            .WithTracing(tracing =>
+            {
+                tracing
+                    .AddHttpClientInstrumentation()
+                    .AddAspNetCoreInstrumentation()
+                    .AddOtlpExporter(options => 
+                    {
+                        options.Endpoint = new Uri(configuration["OTLPEndpoint"] ?? "");
+                        options.Protocol = OtlpExportProtocol.HttpProtobuf;
+                    });
+            });
 
         return services;
     }
