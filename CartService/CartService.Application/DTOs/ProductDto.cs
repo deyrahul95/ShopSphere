@@ -1,4 +1,4 @@
-namespace ProductService.Application.DTOs;
+namespace CartService.Application.DTOs;
 
 public record ProductDto(
     Guid Id,

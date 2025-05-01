@@ -1,4 +1,4 @@
-using CartService.Application.Models;
+using CartService.Application.Results;
 using CartService.Domain.Exceptions;
 
 namespace CartService.Application.Extensions;

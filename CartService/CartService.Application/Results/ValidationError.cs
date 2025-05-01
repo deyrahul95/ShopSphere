@@ -1,4 +1,4 @@
-namespace CartService.Application.Models;
+namespace CartService.Application.Results;
 
 public record ValidationError(
     string Field,

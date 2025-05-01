@@ -12,7 +12,8 @@ public static class DtoMapper
             Name: product.Name,
             Description: product.Description,
             Price: product.Price,
-            Category: product.Category
+            Category: product.Category,
+            InStock: product.InStock
         );
     }
 

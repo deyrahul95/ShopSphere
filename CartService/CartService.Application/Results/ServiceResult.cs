@@ -8,10 +8,18 @@ public class ServiceResult(HttpStatusCode statusCode, string message)
     public string Message { get; init; } = message;
 }
 
-public sealed class ServiceResult<T>(
+public class ServiceResult<T>(
     HttpStatusCode statusCode,
     string message,
     T? data = null) : ServiceResult(statusCode: statusCode, message: message) where T : class
 {
     public T? Data { get; set;} = data;
+}
+
+public sealed class ValidationResult<T>(
+    HttpStatusCode statusCode,
+    string message,
+    List<ValidationError> errors) : ServiceResult<T>(statusCode: statusCode, message: message) where T: class
+{
+    public List<ValidationError> Errors { get; set; } = errors;
 }
