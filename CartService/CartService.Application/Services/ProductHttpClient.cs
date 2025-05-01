@@ -10,7 +10,7 @@ public class ProductHttpClient(HttpClient httpClient, ILogger<ProductHttpClient>
 {
     public async Task<ServiceResult<ProductDto>?> GetProduct(Guid productId)
     {
-        var requestPath = $"/products/{productId}";
+        var requestPath = $"/api/products/{productId}";
         var uri = $"{httpClient.BaseAddress}{requestPath}";
 
         logger.LogInformation("Start processing get product request. URI: {URI}", uri);

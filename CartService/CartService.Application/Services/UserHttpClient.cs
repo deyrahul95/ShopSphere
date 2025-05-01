@@ -10,7 +10,7 @@ public class UserHttpClient(HttpClient httpClient, ILogger<UserHttpClient> logge
 {
     public async Task<ServiceResult<UserDto>?> GetUser(Guid userId)
     {
-        var requestPath = $"/users/{userId}";
+        var requestPath = $"/api/users/{userId}";
         var uri = $"{httpClient.BaseAddress}{requestPath}";
 
         logger.LogInformation("Start processing get user request. URI: {URI}", uri);

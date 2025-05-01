@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using UserService.Domain.Providers;
 using UserService.Domain.Repositories;
 using UserService.Infrastructure.Configs;
+using UserService.Infrastructure.DB;
 using UserService.Infrastructure.Providers;
 using UserService.Infrastructure.Repositories;
 
@@ -39,7 +40,9 @@ public static class ServiceConfigurations
             });
 
         services.AddScoped<ITokenProvider, JWTTokenProvider>();
-        services.AddScoped<IUserRepository, InMemoryUserRepository>();
+        
+        services.AddSingleton<InMemoryDB>();
+        services.AddSingleton<IUserRepository, InMemoryUserRepository>();
          
         return services;
     }

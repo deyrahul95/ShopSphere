@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ProductService.Domain.Repositories;
 using ProductService.Infrastructure.Configs;
+using ProductService.Infrastructure.DB;
 using ProductService.Infrastructure.Repositories;
 
 namespace ProductService.Infrastructure.Extensions;
@@ -34,7 +35,8 @@ public static class ServiceConfigurations
                 };
             });
 
-        services.AddScoped<IProductRepository, InMemoryProductRepository>();
+        services.AddSingleton<InMemoryDB>();
+        services.AddSingleton<IProductRepository, InMemoryProductRepository>();
 
         return services;
     }

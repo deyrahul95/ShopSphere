@@ -190,7 +190,7 @@ public class CartsService(
                 "Failed to fetched user data. User Id: {UserId}, Result: {@Result}",
                 userId,
                 result);
-            return (false, null);
+            return (false, result);
         }
 
         logger.LogInformation(
@@ -211,7 +211,7 @@ public class CartsService(
                 "Failed to fetched product data. Product Id: {ProductId}, Result: {@Result}",
                 productId,
                 result);
-            return (false, null);
+            return (false, result);
         }
 
         logger.LogInformation(
