@@ -17,7 +17,7 @@ public class CartsService(
     IProductHttpClient productHttpClient,
     ILogger<CartsService> logger) : ICartsService
 {
-    public async Task<ServiceResult<CartDto>> AddToCart(
+    public async Task<ServiceResult<CartDto>> AddItemToCart(
         Guid userId,
         AddToCartRequest request,
         CancellationToken cancellationToken = default)
@@ -109,7 +109,7 @@ public class CartsService(
         }
     }
 
-    public async Task<ServiceResult> RemovedFromCart(
+    public async Task<ServiceResult> RemoveItemFromCart(
         Guid userId,
         RemovedFromCartRequest request,
         CancellationToken cancellationToken = default)

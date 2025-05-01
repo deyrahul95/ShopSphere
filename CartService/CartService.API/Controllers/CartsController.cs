@@ -1,3 +1,4 @@
+using System.Net;
 using System.Security.Claims;
 using CartService.Application.DTOs;
 using CartService.Application.Models;
@@ -14,7 +15,10 @@ namespace CartService.API.Controllers;
 public class CartsController(ICartsService cartsService, ILogger<CartsController> logger) : ControllerBase
 {
     [HttpPost]
-    public async Task<ActionResult<ServiceResult<CartDto>>> AddToCart([FromBody] AddToCartRequest request, CancellationToken cancellationToken = default)
+    [Route("item")]
+    public async Task<ActionResult<ServiceResult<CartDto>>> AddItemToCart(
+        [FromBody] AddToCartRequest request,
+        CancellationToken cancellationToken = default)
     {
         var userId = GetLoggedInUserId();
 
@@ -27,7 +31,7 @@ public class CartsController(ICartsService cartsService, ILogger<CartsController
             "Start processing add to cart item request. User Id: {UserId}, Request: {@Request}",
             userId,
             request);
-        var response = await cartsService.AddToCart(
+        var response = await cartsService.AddItemToCart(
             userId: userId,
             request: request,
             cancellationToken: cancellationToken);
@@ -59,8 +63,11 @@ public class CartsController(ICartsService cartsService, ILogger<CartsController
         return StatusCode((int)response.StatusCode, response);
     }
 
-    [HttpPut]
-    public async Task<ActionResult<ServiceResult<CartDto>>> RemovedFromCart([FromBody] RemovedFromCartRequest request, CancellationToken cancellationToken = default)
+    [HttpDelete]
+    [Route("item")]
+    public async Task<ActionResult<ServiceResult<CartDto>>> RemoveItemFromCart(
+        [FromBody] RemovedFromCartRequest request,
+        CancellationToken cancellationToken = default)
     {
         var userId = GetLoggedInUserId();
 
@@ -73,7 +80,7 @@ public class CartsController(ICartsService cartsService, ILogger<CartsController
             "Start processing removed from cart item request. User Id: {UserId}, Request: {@Request}",
             userId,
             request);
-        var response = await cartsService.RemovedFromCart(
+        var response = await cartsService.RemoveItemFromCart(
             userId: userId,
             request: request,
             cancellationToken: cancellationToken);
@@ -82,6 +89,12 @@ public class CartsController(ICartsService cartsService, ILogger<CartsController
             "Completed processing removed from cart item request. User Id: {UserId}, Status Code: {StatusCode}",
             userId,
             response.StatusCode);
+
+        if (response.StatusCode == HttpStatusCode.NoContent)
+        {
+            return NoContent();
+        }
+
         return StatusCode((int)response.StatusCode, response);
     }
 
@@ -102,6 +115,12 @@ public class CartsController(ICartsService cartsService, ILogger<CartsController
             "Completed processing clear cart request. User Id: {UserId}, Status Code: {StatusCode}",
             userId,
             response.StatusCode);
+
+        if (response.StatusCode == HttpStatusCode.NoContent)
+        {
+            return NoContent();
+        }
+
         return StatusCode((int)response.StatusCode, response);
     }
 

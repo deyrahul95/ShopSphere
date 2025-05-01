@@ -6,14 +6,14 @@ namespace CartService.Application.Services.Interfaces;
 
 public interface ICartsService
 {
-    Task<ServiceResult<CartDto>> AddToCart(
+    Task<ServiceResult<CartDto>> AddItemToCart(
         Guid userId,
         AddToCartRequest request,
         CancellationToken cancellationToken = default);
 
     Task<ServiceResult<CartDto>> GetCart(Guid userId, CancellationToken cancellationToken = default);
 
-    Task<ServiceResult> RemovedFromCart(
+    Task<ServiceResult> RemoveItemFromCart(
         Guid userId,
         RemovedFromCartRequest request,
         CancellationToken cancellationToken = default);
