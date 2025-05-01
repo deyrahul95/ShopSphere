@@ -125,7 +125,7 @@ public class CartService(
 
             cart.RemoveItem(request.ProductId);
 
-            await cartRepository.Update(cartId: cart.Id, cart: cart, cancellationToken: cancellationToken);
+            await cartRepository.Update(cart: cart, cancellationToken: cancellationToken);
 
             return CartResults.NoContent;
         }
@@ -163,7 +163,7 @@ public class CartService(
             }
 
             cart.Clear();
-            await cartRepository.Update(cartId: cart.Id, cart: cart, cancellationToken: cancellationToken);
+            await cartRepository.Update(cart: cart, cancellationToken: cancellationToken);
 
             return CartResults.NoContent;
         }
@@ -265,7 +265,7 @@ public class CartService(
             quantity: quantity,
             price: product.Price);
 
-        await cartRepository.Update(cartId: cart.Id, cart: cart, cancellationToken: cancellationToken);
+        await cartRepository.Update(cart: cart, cancellationToken: cancellationToken);
         return cart;
     }
 }
