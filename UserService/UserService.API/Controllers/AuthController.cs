@@ -32,7 +32,7 @@ public class AuthController(IAuthService authService, ILogger<AuthController> lo
             cancellationToken: cancellationToken);
 
         logger.LogInformation(
-            "Stop processing login request. User Name: {username}, Status Code: {code}",
+            "Completed processing login request. User Name: {username}, Status Code: {code}",
             request.Username,
             response.StatusCode);
 

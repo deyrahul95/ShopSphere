@@ -25,7 +25,7 @@ public class ProductsController(IProductsService productService, ILogger<Product
             request: request,
             cancellationToken: cancellationToken);
 
-        logger.LogInformation("Stop processing search products request. Status Code: {StatusCode}",response.StatusCode);
+        logger.LogInformation("Completed processing search products request. Status Code: {StatusCode}",response.StatusCode);
 
         return StatusCode((int)response.StatusCode, response);
     }
@@ -43,7 +43,7 @@ public class ProductsController(IProductsService productService, ILogger<Product
             cancellationToken: cancellationToken);
 
         logger.LogInformation(
-            "Stop processing get product request. Product Id: {ProductId}, Status Code: {StatusCode}",
+            "Completed processing get product request. Product Id: {ProductId}, Status Code: {StatusCode}",
             id,
             response.StatusCode);
 

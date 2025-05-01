@@ -44,11 +44,11 @@ public sealed class Cart
             );
         }
 
-        var existingItem = _items.FirstOrDefault(i => i.ProductId == productId);
+        var cartItem = _items.FirstOrDefault(i => i.ProductId == productId);
 
-        if (existingItem != null)
+        if (cartItem is not null)
         {
-            existingItem.IncreasedQuantity(quantity: quantity);
+            cartItem.IncreasedQuantity(quantity: quantity);
             UpdateAt = DateTime.UtcNow;
             return;
         }
@@ -67,16 +67,15 @@ public sealed class Cart
     {
         var item = _items.FirstOrDefault(i => i.ProductId == productId);
 
-        if (item != null)
+        if (item is null)
         {
-            _items.Remove(item);
-            UpdateAt = DateTime.UtcNow;
+            throw new CartValidationException(
+                field: nameof(CartItem.ProductId),
+                message: ExceptionMessages.ProductNotFoundInCart(id: productId));
         }
 
-        throw new CartValidationException(
-            nameof(CartItem.ProductId),
-            ExceptionMessages.ProductNotFoundInCart(id: productId)
-        );
+        _items.Remove(item);
+        UpdateAt = DateTime.UtcNow;
     }
 
     public void Clear()

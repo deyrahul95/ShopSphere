@@ -24,7 +24,7 @@ public class UsersController(
             cancellationToken: cancellationToken);
 
         logger.LogInformation(
-            "Stop processing get user request. User Id: {id}, Status Code: {code}",
+            "Completed processing get user request. User Id: {id}, Status Code: {code}",
             id,
             response.StatusCode);
 

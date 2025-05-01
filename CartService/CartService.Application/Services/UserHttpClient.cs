@@ -16,18 +16,8 @@ public class UserHttpClient(HttpClient httpClient, ILogger<UserHttpClient> logge
         logger.LogInformation("Start processing get user request. URI: {URI}", uri);
         var response = await httpClient.GetAsync(requestPath);
 
-        if (response.IsSuccessStatusCode is false)
-        {
-            logger.LogWarning(
-                "Failed to process request. URI: {uri}, Response: {@Response}",
-                uri,
-                response);
-
-            return null;
-        }
-
         logger.LogInformation(
-            "Stop processing get user request. URI: {URI}, StatusCode: {StatusCode}",
+            "Completed processing get user request. URI: {URI}, StatusCode: {StatusCode}",
             uri,
             response.StatusCode);
 

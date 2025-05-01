@@ -11,6 +11,8 @@ services:
       - "5120:8080"
     networks:
       - app_network
+    depends_on:
+      - seq
 
   product_service:
     build:
@@ -22,6 +24,8 @@ services:
       - "5130:8080"
     networks:
       - app_network
+    depends_on:
+      - seq
 
   cart_service:
     build:
@@ -36,6 +40,7 @@ services:
     depends_on:
       - user_service
       - product_service
+      - seq
 
   seq:
     image: datalust/seq:latest

@@ -33,7 +33,7 @@ public class CartsController(ICartsService cartsService, ILogger<CartsController
             cancellationToken: cancellationToken);
 
         logger.LogInformation(
-            "Stop processing add to cart item request. User Id: {UserId}, Status Code: {StatusCode}",
+            "Completed processing add to cart item request. User Id: {UserId}, Status Code: {StatusCode}",
             userId,
             response.StatusCode);
         return StatusCode((int)response.StatusCode, response);
@@ -53,7 +53,7 @@ public class CartsController(ICartsService cartsService, ILogger<CartsController
         var response = await cartsService.GetCart(userId: userId, cancellationToken: cancellationToken);
 
         logger.LogInformation(
-            "Stop processing get cart request. User Id: {UserId}, Status Code: {StatusCode}",
+            "Completed processing get cart request. User Id: {UserId}, Status Code: {StatusCode}",
             userId,
             response.StatusCode);
         return StatusCode((int)response.StatusCode, response);
@@ -79,7 +79,7 @@ public class CartsController(ICartsService cartsService, ILogger<CartsController
             cancellationToken: cancellationToken);
 
         logger.LogInformation(
-            "Stop processing removed from cart item request. User Id: {UserId}, Status Code: {StatusCode}",
+            "Completed processing removed from cart item request. User Id: {UserId}, Status Code: {StatusCode}",
             userId,
             response.StatusCode);
         return StatusCode((int)response.StatusCode, response);
@@ -99,7 +99,7 @@ public class CartsController(ICartsService cartsService, ILogger<CartsController
         var response = await cartsService.ClearCart(userId: userId, cancellationToken: cancellationToken);
 
         logger.LogInformation(
-            "Stop processing clear cart request. User Id: {UserId}, Status Code: {StatusCode}",
+            "Completed processing clear cart request. User Id: {UserId}, Status Code: {StatusCode}",
             userId,
             response.StatusCode);
         return StatusCode((int)response.StatusCode, response);
