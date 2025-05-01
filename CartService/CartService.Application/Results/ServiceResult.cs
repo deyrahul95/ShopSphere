@@ -16,10 +16,18 @@ public class ServiceResult<T>(
     public T? Data { get; set;} = data;
 }
 
+public class ValidationResult (
+    HttpStatusCode statusCode,
+    string message,
+    List<ValidationError> errors) : ServiceResult(statusCode: statusCode, message: message) 
+{
+    public List<ValidationError> Errors { get; set; } = errors;
+}
+
 public sealed class ValidationResult<T>(
     HttpStatusCode statusCode,
     string message,
-    List<ValidationError> errors) : ServiceResult<T>(statusCode: statusCode, message: message) where T: class
+    List<ValidationError> errors) : ServiceResult<T>(statusCode: statusCode, message: message, data: null) where T: class
 {
     public List<ValidationError> Errors { get; set; } = errors;
 }

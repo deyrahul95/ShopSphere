@@ -46,7 +46,7 @@ public class CartService(
                 return CartResults<CartDto>.OutOfStock(request.ProductId);
             }
 
-            var cart = await cartRepository.GetByUserId(userId: userId, cancellationToken: cancellationToken);
+            var cart = await FetchCartByUserId(userId: userId, cancellationToken: cancellationToken);
 
             cart = cart != null
                 ? await AddItemToCart(
@@ -84,25 +84,99 @@ public class CartService(
         }
     }
 
-    private async Task<(bool isSuccess, ServiceResult<ProductDto>? result)> FetchProduct(Guid productId)
+    public async Task<ServiceResult<CartDto>> GetCart(Guid userId, CancellationToken cancellationToken = default)
     {
-        logger.LogInformation("Fetching product data. Product Id: {ProductId}", productId);
-        var result = await productHttpClient.GetProduct(productId);
-
-        if (result == null || result.StatusCode != HttpStatusCode.OK)
+        try
         {
-            logger.LogWarning(
-                "Failed to fetched product data. Product Id: {ProductId}, Result: {@Result}",
-                productId,
-                result);
-            return (false, null);
-        }
+            var cart = await FetchCartByUserId(userId: userId, cancellationToken: cancellationToken);
 
-        logger.LogInformation(
-            "Product data fetched successfully. Product Id: {ProductId}, Status Code: {StatusCode}",
-            productId,
-            result.StatusCode);
-        return (true, result);
+            if (cart is null)
+            {
+                return CartResults<CartDto>.CartNotFound;
+            }
+            
+            return CartResults<CartDto>.CartFetched(cart.ToDto());
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(
+                ex,
+                "Failed to add item into cart. User Id: {UserId}, Error: {Error}",
+                userId,
+                ex.Message);
+
+            return CartResults<CartDto>.InternalServerError;
+        }
+    }
+
+    public async Task<ServiceResult> RemovedFromCart(
+        Guid userId,
+        RemovedFromCartRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var cart = await FetchCartByUserId(userId: userId, cancellationToken: cancellationToken);
+
+            if (cart is null)
+            {
+                return CartResults.CartNotFound;
+            }
+
+            cart.RemoveItem(request.ProductId);
+
+            await cartRepository.Update(cartId: cart.Id, cart: cart, cancellationToken: cancellationToken);
+
+            return CartResults.NoContent;
+        }
+        catch (ValidationException ex)
+        {
+            logger.LogError(
+                ex,
+                "Domain validation failed. User Id: {UserId}, Error: {Error}",
+                userId,
+                ex.Message);
+
+            return CartResults<CartDto>.ValidationFailed([ex.ToError()]);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(
+                ex,
+                "Failed to add item into cart. User Id: {UserId}, Error: {Error}",
+                userId,
+                ex.Message);
+
+            return CartResults.InternalServerError;
+        }
+    }
+
+    public async Task<ServiceResult> ClearCart(Guid userId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var cart = await FetchCartByUserId(userId: userId, cancellationToken: cancellationToken);
+
+            if (cart is null)
+            {
+                return CartResults.CartNotFound;
+            }
+
+            cart.Clear();
+            await cartRepository.Update(cartId: cart.Id, cart: cart, cancellationToken: cancellationToken);
+
+            return CartResults.NoContent;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(
+                ex,
+                "Failed to add item into cart. User Id: {UserId}, Error: {Error}",
+                userId,
+                ex.Message);
+
+            return CartResults.InternalServerError;
+        }
     }
 
     private async Task<(bool isSuccess, ServiceResult<UserDto>? result)> FetchUser(Guid userId)
@@ -126,22 +200,40 @@ public class CartService(
         return (true, result);
     }
 
-    public Task<ServiceResult> ClearCart(Guid userId, CancellationToken cancellationToken = default)
+    private async Task<(bool isSuccess, ServiceResult<ProductDto>? result)> FetchProduct(Guid productId)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Fetching product data. Product Id: {ProductId}", productId);
+        var result = await productHttpClient.GetProduct(productId);
+
+        if (result == null || result.StatusCode != HttpStatusCode.OK)
+        {
+            logger.LogWarning(
+                "Failed to fetched product data. Product Id: {ProductId}, Result: {@Result}",
+                productId,
+                result);
+            return (false, null);
+        }
+
+        logger.LogInformation(
+            "Product data fetched successfully. Product Id: {ProductId}, Status Code: {StatusCode}",
+            productId,
+            result.StatusCode);
+        return (true, result);
     }
 
-    public Task<ServiceResult<CartDto>> GetCart(Guid userId, CancellationToken cancellationToken = default)
+    private async Task<Cart?> FetchCartByUserId(Guid userId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
-    }
+        logger.LogInformation("Fetching cart data. User Id: {UserId}", userId);
+        var cart = await cartRepository.GetByUserId(userId: userId, cancellationToken: cancellationToken);
 
-    public Task<ServiceResult> RemovedFromCart(
-        Guid userId,
-        RemovedFromCartRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
+        if (cart is null)
+        {
+            logger.LogWarning("Cart does not exist. UserId: {UserId}", userId);
+            return null;
+        }
+
+        logger.LogInformation("Cart data fetched successfully. User Id: {UserId}, Cart Id: {CartId}", userId, cart.Id);
+        return cart;
     }
 
     private async Task<Cart> CreateCartWithItem(

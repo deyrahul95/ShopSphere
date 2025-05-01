@@ -49,6 +49,7 @@ public sealed class Cart
         if (existingItem != null)
         {
             existingItem.IncreasedQuantity(quantity: quantity);
+            UpdateAt = DateTime.UtcNow;
             return;
         }
 
@@ -59,6 +60,7 @@ public sealed class Cart
             price: price);
 
         _items.Add(newItem);
+        UpdateAt = DateTime.UtcNow;
     }
 
     public void RemoveItem(Guid productId)
@@ -68,6 +70,7 @@ public sealed class Cart
         if (item != null)
         {
             _items.Remove(item);
+            UpdateAt = DateTime.UtcNow;
         }
 
         throw new CartValidationException(
@@ -79,6 +82,7 @@ public sealed class Cart
     public void Clear()
     {
         _items.Clear();
+        UpdateAt = DateTime.UtcNow;
     }
 
     public decimal GetTotalPrice()
