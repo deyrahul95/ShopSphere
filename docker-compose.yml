@@ -23,6 +23,20 @@ services:
     networks:
       - app_network
 
+  cart_service:
+    build:
+      context: ./CartService
+      dockerfile: Dockerfile
+    image: cart-service:latest
+    container_name: cart-service-1
+    ports:
+      - "5140:8080"
+    networks:
+      - app_network
+    depends_on:
+      - user_service
+      - product_service
+
   seq:
     image: datalust/seq:latest
     container_name: seq-1

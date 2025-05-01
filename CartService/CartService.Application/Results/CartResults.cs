@@ -24,9 +24,13 @@ public class CartResults
 
 public class CartResults<T> : CartResults where T : class
 {
-    public static new ServiceResult<T> InternalServerError => (ServiceResult<T>)CartResults.InternalServerError;
-    public static new ServiceResult<T> CartNotFound => (ServiceResult<T>)CartResults.CartNotFound;
-
+    public static new ServiceResult<T> InternalServerError =>  new(
+        statusCode: HttpStatusCode.InternalServerError,
+        message: "Some unknown error occurred! Please try after sometime.");
+        
+    public static new ServiceResult<T> CartNotFound =>  new(
+        statusCode: HttpStatusCode.NotFound,
+        message: "No Cart found for requested user.");
 
     public static new ValidationResult<T> ValidationFailed(List<ValidationError> errors) => new(
         statusCode: HttpStatusCode.BadRequest,
