@@ -9,9 +9,9 @@ using UserService.Infrastructure.Configs;
 
 namespace UserService.Infrastructure.Providers;
 
-public class JWTTokenProvider(IOptions<JWTConfig> jwtOptions) : ITokenProvider
+public class JWTTokenProvider(IOptions<JwtConfig> jwtOptions) : ITokenProvider
 {
-    private readonly JWTConfig _jwtConfig = jwtOptions.Value;
+    private readonly JwtConfig _jwtConfig = jwtOptions.Value;
     private const string SecurityAlgorithm = SecurityAlgorithms.HmacSha512;
 
     public string GenerateAccessToken(User user)

@@ -1,11 +1,11 @@
-using CartService.Domain.Constants;
+using CartService.Infrastructure.Constants;
 
 namespace CartService.Infrastructure.Configs;
 
-public class JWTConfig
+public class JwtConfig
 {
     public string Key { get; set; } = string.Empty;
     public string Issuer { get; set; } = string.Empty;
     public string Audience { get; set; } = string.Empty;
-    public int AccessTokenExpiresInDays { get; set; } = DomainConstants.DefaultAccessTokenExpiryInDays;
+    public int AccessTokenExpiresInDays { get; set; } = JwtConstants.DefaultAccessTokenExpiryInDays;
 }

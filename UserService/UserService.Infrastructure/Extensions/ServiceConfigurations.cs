@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using UserService.Domain.Providers;
 using UserService.Domain.Repositories;
 using UserService.Infrastructure.Configs;
+using UserService.Infrastructure.Constants;
 using UserService.Infrastructure.DB;
 using UserService.Infrastructure.Providers;
 using UserService.Infrastructure.Repositories;
@@ -20,9 +21,9 @@ public static class ServiceConfigurations
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.Configure<JWTConfig>(configuration.GetSection("JWTSettings"));
+        services.Configure<JwtConfig>(configuration.GetSection(JwtConstants.JwtConfigName));
 
-        var jwtConfig = services.BuildServiceProvider().GetService<IOptions<JWTConfig>>()?.Value;
+        var jwtConfig = services.BuildServiceProvider().GetService<IOptions<JwtConfig>>()?.Value;
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>

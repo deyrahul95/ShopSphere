@@ -11,7 +11,4 @@ public class DomainConstants
     /// Maximum total number of distinct items allowed in a shopping order
     /// </summary>
     public const int MaxDistinctItemsInOrder = 10;
-
-    public const int DefaultAccessTokenExpiryInDays = 1;
-    public const string JwtConfigName = "JwtConfigs";
 }

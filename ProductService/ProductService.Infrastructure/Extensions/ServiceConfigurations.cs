@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ProductService.Domain.Repositories;
 using ProductService.Infrastructure.Configs;
+using ProductService.Infrastructure.Constants;
 using ProductService.Infrastructure.DB;
 using ProductService.Infrastructure.Repositories;
 
@@ -16,9 +17,9 @@ public static class ServiceConfigurations
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<JWTConfig>(configuration.GetSection("JWTSettings"));
+        services.Configure<JwtConfig>(configuration.GetSection(JwtConstants.JwtConfigName));
 
-        var jwtConfig = services.BuildServiceProvider().GetService<IOptions<JWTConfig>>()?.Value;
+        var jwtConfig = services.BuildServiceProvider().GetService<IOptions<JwtConfig>>()?.Value;
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>

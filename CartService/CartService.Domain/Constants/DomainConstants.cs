@@ -13,6 +13,4 @@ public sealed class DomainConstants
     /// Maximum total number of distinct items allowed in a shopping cart
     /// </summary>
     public const int MaxDistinctItemsInCart = 10;
-
-    public const int DefaultAccessTokenExpiryInDays = 1;
 }

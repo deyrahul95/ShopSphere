@@ -5,9 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using OrderService.Domain.Constants;
 using OrderService.Domain.Repositories;
 using OrderService.Infrastructure.Configs;
+using OrderService.Infrastructure.Constants;
 using OrderService.Infrastructure.DB;
 using OrderService.Infrastructure.Repositories;
 
@@ -19,7 +19,7 @@ public static class ServiceConfigurations
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.Configure<JwtConfig>(configuration.GetSection(DomainConstants.JwtConfigName));
+        services.Configure<JwtConfig>(configuration.GetSection(JwtConstants.JwtConfigName));
 
         var jwtConfig = services.BuildServiceProvider().GetService<IOptions<JwtConfig>>()?.Value;
 

@@ -1,6 +1,7 @@
 using System.Text;
 using CartService.Domain.Repositories;
 using CartService.Infrastructure.Configs;
+using CartService.Infrastructure.Constants;
 using CartService.Infrastructure.DB;
 using CartService.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,9 +17,9 @@ public static class ServiceConfigurations
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<JWTConfig>(configuration.GetSection("JWTSettings"));
+        services.Configure<JwtConfig>(configuration.GetSection(JwtConstants.JwtConfigName));
 
-        var jwtConfig = services.BuildServiceProvider().GetService<IOptions<JWTConfig>>()?.Value;
+        var jwtConfig = services.BuildServiceProvider().GetService<IOptions<JwtConfig>>()?.Value;
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
