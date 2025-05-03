@@ -1,0 +1,374 @@
+{
+	"info": {
+		"_postman_id": "9e6c64a7-e188-4dc2-a5c5-0875705d08a6",
+		"name": "ShopSphere",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29469747"
+	},
+	"item": [
+		{
+			"name": "UserService",
+			"item": [
+				{
+					"name": "Get user by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{userservice}}/users/d44f08cd-c8cc-46aa-8431-796332c1ed58",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"users",
+								"d44f08cd-c8cc-46aa-8431-796332c1ed58"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{userservice}}/health",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"\tpm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"if(response.statusCode === 200){\r",
+									"\tpm.collectionVariables.set(\"token\", response.data.token);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"username\": \"admin_user\",\r\n\t\"password\": \"Admin@123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{userservice}}/auth/login",
+							"host": [
+								"{{userservice}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ProductService",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{productservice}}/health",
+							"host": [
+								"{{productservice}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{productservice}}/products/search?name=samsung&pageNumber=1&pageSize=5",
+							"host": [
+								"{{productservice}}"
+							],
+							"path": [
+								"products",
+								"search"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "headphones",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "samsung"
+								},
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{productservice}}/products/0dd9f569-4f67-4352-af51-745947badc77",
+							"host": [
+								"{{productservice}}"
+							],
+							"path": [
+								"products",
+								"0dd9f569-4f67-4352-af51-745947badc77"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CartService",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{cartservice}}/health",
+							"host": [
+								"{{cartservice}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{cartservice}}/carts",
+							"host": [
+								"{{cartservice}}"
+							],
+							"path": [
+								"carts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add item to cart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"productId\": \"2d3768ed-3b50-4450-b90a-b72b0ba26c4e\",\r\n\t\"quantity\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cartservice}}/carts/item",
+							"host": [
+								"{{cartservice}}"
+							],
+							"path": [
+								"carts",
+								"item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove item from cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"productId\": \"ed855afb-f0e6-428c-966c-1e72e999fced\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cartservice}}/carts/item",
+							"host": [
+								"{{cartservice}}"
+							],
+							"path": [
+								"carts",
+								"item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Clear cart items",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{cartservice}}/carts",
+							"host": [
+								"{{cartservice}}"
+							],
+							"path": [
+								"carts"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "OrderService",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{orderservice}}/health",
+							"host": [
+								"{{orderservice}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "userservice",
+			"value": "http://localhost:5120/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "productservice",
+			"value": "http://localhost:5130/api",
+			"type": "string"
+		},
+		{
+			"key": "cartservice",
+			"value": "http://localhost:5140/api",
+			"type": "string"
+		},
+		{
+			"key": "orderservice",
+			"value": "http://localhost:5150/api",
+			"type": "string"
+		}
+	]
+}
