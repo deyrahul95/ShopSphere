@@ -70,6 +70,6 @@ public class Order
 
     private decimal CalculateTotalAmount()
     {
-        return Items.Select(x => x.Price * x.Quantity).Sum();
+        return Items.Sum(item => item.Price * item.Quantity);
     }
 }

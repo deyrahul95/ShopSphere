@@ -26,6 +26,46 @@ public sealed class CartItem
 
     public static CartItem Create(Guid productId, string productName, int quantity, decimal price)
     {
+        if (productId.Equals(Guid.Empty))
+        {
+            throw new CartItemValidationException(
+                field: nameof(ProductId),
+                message: ExceptionMessages.InvalidProductIdFormat
+            );
+        }
+
+        if (string.IsNullOrEmpty(productName))
+        {
+            throw new CartItemValidationException(
+                field: nameof(ProductName),
+                message: ExceptionMessages.ProductNameCannotEmpty
+            );
+        }
+
+        if (quantity <= 0)
+        {
+            throw new CartItemValidationException(
+                field: nameof(Quantity),
+                message: ExceptionMessages.ItemQuantityMustBePositive
+            );
+        }
+
+        if (quantity > DomainConstants.MaxQuantityPerItemInCart)
+        {
+            throw new CartItemValidationException(
+                field: nameof(Quantity),
+                message: ExceptionMessages.ItemQuantityExceedsMaxLimit
+            );
+        }
+
+        if (price <= 0)
+        {
+            throw new CartItemValidationException(
+                field: nameof(Price),
+                message: ExceptionMessages.ItemPriceMustBePositive
+            );
+        }
+
         return new CartItem(
             productId: productId,
             productName: productName,
@@ -50,7 +90,8 @@ public sealed class CartItem
 
         int finalQuantity = Quantity + quantity;
 
-        if (quantity > DomainConstants.MaxQuantityPerItemInCart || finalQuantity > DomainConstants.MaxQuantityPerItemInCart)
+        if (quantity > DomainConstants.MaxQuantityPerItemInCart
+            || finalQuantity > DomainConstants.MaxQuantityPerItemInCart)
         {
             throw new CartItemValidationException(
                 field: nameof(Quantity),

@@ -44,7 +44,7 @@ public sealed class Cart
             );
         }
 
-        var cartItem = _items.FirstOrDefault(i => i.ProductId == productId);
+        var cartItem = _items.FirstOrDefault(item => item.ProductId == productId);
 
         if (cartItem is not null)
         {
@@ -65,17 +65,18 @@ public sealed class Cart
 
     public void RemoveItem(Guid productId)
     {
-        var item = _items.FirstOrDefault(i => i.ProductId == productId);
+        var item = _items.FirstOrDefault(item => item.ProductId == productId);
 
-        if (item is null)
+        if (item is not null)
         {
-            throw new CartValidationException(
-                field: nameof(CartItem.ProductId),
-                message: ExceptionMessages.ProductNotFoundInCart(id: productId));
+            _items.Remove(item);
+            UpdateAt = DateTime.UtcNow;
+            return;
         }
 
-        _items.Remove(item);
-        UpdateAt = DateTime.UtcNow;
+        throw new CartValidationException(
+            field: nameof(CartItem.ProductId),
+            message: ExceptionMessages.ProductNotFoundInCart(id: productId));
     }
 
     public void Clear()
@@ -86,6 +87,6 @@ public sealed class Cart
 
     public decimal GetTotalPrice()
     {
-        return _items.Sum(i => i.GetTotalPrice());
+        return _items.Sum(item => item.GetTotalPrice());
     }
 }
