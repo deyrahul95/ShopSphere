@@ -13,4 +13,5 @@ public class DomainConstants
     public const int MaxDistinctItemsInOrder = 10;
 
     public const int DefaultAccessTokenExpiryInDays = 1;
+    public const string JwtConfigName = "JwtConfigs";
 }
