@@ -13,7 +13,6 @@ namespace CartService.Application.Services;
 
 public class CartsService(
     ICartRepository cartRepository,
-    IUserHttpClient userHttpClient,
     IProductHttpClient productHttpClient,
     ILogger<CartsService> logger) : ICartsService
 {
@@ -24,13 +23,6 @@ public class CartsService(
     {
         try
         {
-            var userResult = await FetchUser(userId);
-
-            if (userResult.isSuccess is false)
-            {
-                return CartResults<CartDto>.HttpRequestFailed(userResult.result);
-            }
-
             var (isSuccess, result) = await FetchProduct(request.ProductId);
 
             if (isSuccess is false)
@@ -177,27 +169,6 @@ public class CartsService(
 
             return CartResults.InternalServerError;
         }
-    }
-
-    private async Task<(bool isSuccess, ServiceResult<UserDto>? result)> FetchUser(Guid userId)
-    {
-        logger.LogInformation("Fetching user data. User Id: {UserId}", userId);
-        var result = await userHttpClient.GetUser(userId);
-
-        if (result == null || result.StatusCode != HttpStatusCode.OK)
-        {
-            logger.LogWarning(
-                "Failed to fetched user data. User Id: {UserId}, Result: {@Result}",
-                userId,
-                result);
-            return (false, result);
-        }
-
-        logger.LogInformation(
-            "User data fetched successfully. User Id: {UserId}, Status Code: {StatusCode}",
-            userId,
-            result.StatusCode);
-        return (true, result);
     }
 
     private async Task<(bool isSuccess, ServiceResult<ProductDto>? result)> FetchProduct(Guid productId)

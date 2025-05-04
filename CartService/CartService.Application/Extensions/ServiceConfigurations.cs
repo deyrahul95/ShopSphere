@@ -15,19 +15,14 @@ public static class ServiceConfigurations
     {
         services.AddTransient<AuthenticatedHttpClientHandler>();
 
-        services.AddHttpClient<IUserHttpClient, UserHttpClient>(client =>
-        {
-            client.BaseAddress = new Uri(configuration[HttpClientConstants.UserBaseAddress] ?? "");
-        })
-        .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
-        .AddResilienceHandler(HttpClientConstants.UserPipelineName, ConfigureDefaultResiliencePipeline);
-
         services.AddHttpClient<IProductHttpClient, ProductHttpClient>(client =>
         {
-            client.BaseAddress = new Uri(configuration[HttpClientConstants.ProductBaseAddress] ?? "");
+            client.BaseAddress = new Uri(configuration[HttpClientConstants.BaseAddress] ?? "");
         })
         .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
-        .AddResilienceHandler(HttpClientConstants.ProductPipelineName, ConfigureDefaultResiliencePipeline);
+        .AddResilienceHandler(
+            HttpClientConstants.ProductPipelineName,
+            ConfigureDefaultResiliencePipeline);
 
         services.AddScoped<ICartsService, CartsService>();
 

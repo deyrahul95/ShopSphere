@@ -12,10 +12,10 @@ namespace CartService.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class CartsController(ICartsService cartsService, ILogger<CartsController> logger) : ControllerBase
+public class CartController(ICartsService cartsService, ILogger<CartController> logger) : ControllerBase
 {
     [HttpPost]
-    [Route("item")]
+    [Route("add")]
     public async Task<ActionResult<ServiceResult<CartDto>>> AddItemToCart(
         [FromBody] AddToCartRequest request,
         CancellationToken cancellationToken = default)
@@ -64,7 +64,7 @@ public class CartsController(ICartsService cartsService, ILogger<CartsController
     }
 
     [HttpDelete]
-    [Route("item")]
+    [Route("removed")]
     public async Task<ActionResult<ServiceResult<CartDto>>> RemoveItemFromCart(
         [FromBody] RemovedFromCartRequest request,
         CancellationToken cancellationToken = default)
