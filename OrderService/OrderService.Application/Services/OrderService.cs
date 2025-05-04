@@ -6,14 +6,15 @@ using OrderService.Application.Models;
 using OrderService.Application.Results;
 using OrderService.Application.Services.Interfaces;
 using OrderService.Domain.Entities;
+using OrderService.Domain.Exceptions;
 using OrderService.Domain.Repositories;
 
 namespace OrderService.Application.Services;
 
-public class OrderService(
+public class OrdersService(
     IOrderRepository orderRepository,
     ICartHttpClient cartHttpClient,
-    ILogger<OrderService> logger) : IOrderService
+    ILogger<OrdersService> logger) : IOrdersService
 {
     public async Task<ServiceResult<OrderDto>> CreateOrder(
         Guid userId,
@@ -56,6 +57,16 @@ public class OrderService(
 
             return OrderResults<OrderDto>.OrderCreated(newOrder.ToDto());
         }
+        catch (ValidationException ex)
+        {
+            logger.LogError(
+                ex,
+                "Domain validation failed. User Id: {UserId}, Error: {Error}",
+                userId,
+                ex.Message);
+
+            return OrderResults<OrderDto>.ValidationFailed([ex.ToError()]);
+        }
         catch (Exception ex)
         {
             logger.LogError(
@@ -68,20 +79,105 @@ public class OrderService(
         }
     }
 
-    public Task<ServiceResult<OrderDto>> GetOrder(
+    public async Task<ServiceResult<OrderDto>> GetOrder(
         Guid orderId,
         Guid userId,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var order = await FetchOrderById(
+                orderId: orderId,
+                userId: userId,
+                cancellationToken: cancellationToken);
+
+            if (order is null)
+            {
+                logger.LogWarning(
+                    "Order not found. Order Id: {OrderId}, User Id: {UserId}",
+                    orderId,
+                    userId);
+                return OrderResults<OrderDto>.OrderNotFound(orderId);
+            }
+
+            return OrderResults<OrderDto>.OrderFetched(order.ToDto());
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(
+                ex,
+                "Failed to fetch order. Order Id: {OrderId}, User Id: {UserId}, Error: {Error}",
+                orderId,
+                userId,
+                ex.Message);
+
+            return OrderResults<OrderDto>.InternalServerError;
+        }
     }
 
-    public Task<ServiceResult> UpdateOrderStatus(
+    public async Task<ServiceResult> UpdateOrderStatus(
         Guid userId,
         UpdateStatusRequest request,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var order = await FetchOrderById(
+               orderId: request.OrderId,
+               userId: userId,
+               cancellationToken: cancellationToken);
+
+            if (order is null)
+            {
+                logger.LogWarning(
+                    "Order not found. Order Id: {OrderId}, User Id: {UserId}",
+                    request.OrderId,
+                    userId);
+                return OrderResults<OrderDto>.OrderNotFound(request.OrderId);
+            }
+            
+            order.UpdateOrderState(request.OrderState);
+            order.UpdatePaymentState(request.PaymentState);
+            
+            await orderRepository.UpdateOrder(order: order, cancellationToken: cancellationToken);
+
+            return OrderResults.NoContent;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(
+                ex,
+                "Failed to update order.Order Id: {OrderId}, User Id: {UserId}, Error: {Error}",
+                request.OrderId,
+                userId,
+                ex.Message);
+
+            return OrderResults<OrderDto>.InternalServerError;
+        }
+    }
+
+    private async Task<Order?> FetchOrderById(Guid orderId, Guid userId, CancellationToken cancellationToken)
+    {
+        logger.LogInformation("Fetching order data.Order Id: {OrderId}, User Id: {UserId}", orderId, userId);
+        var order = await orderRepository.GetOrder(
+                userId: userId,
+                orderId: orderId,
+                cancellationToken: cancellationToken);
+
+        if (order is null)
+        {
+            logger.LogWarning(
+                "order not found. Order Id: {OrderId}, UserId: {UserId}",
+                orderId,
+                userId);
+            return null;
+        }
+
+        logger.LogInformation(
+            "order data fetched successfully. User Id: {UserId}, order Id: {OrderId}",
+            userId,
+            order.Id);
+        return order;
     }
 
     private async Task<(bool isSuccess, ServiceResult<CartDto>? result)> FetchCart()

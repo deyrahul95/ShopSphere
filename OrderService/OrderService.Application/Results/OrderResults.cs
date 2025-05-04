@@ -4,12 +4,14 @@ namespace OrderService.Application.Results;
 
 public class OrderResults
 {
-    
+    public static ServiceResult NoContent => new(
+        statusCode: HttpStatusCode.NoContent,
+        message: string.Empty);
 }
 
 public class OrderResults<T> where T : class
 {
-    public static ServiceResult<T> InternalServerError =>  new(
+    public static ServiceResult<T> InternalServerError => new(
         statusCode: HttpStatusCode.InternalServerError,
         message: "Some unknown error occurred! Please try after sometime.");
 
@@ -34,4 +36,13 @@ public class OrderResults<T> where T : class
         statusCode: HttpStatusCode.OK,
         message: "Order fetched successfully.",
         data: data);
+
+    public static ServiceResult<T> OrderNotFound(Guid id) => new(
+        statusCode: HttpStatusCode.NotFound,
+        message: $"Order with id:{id} not found in our database.");
+
+    public static ValidationResult<T> ValidationFailed(List<ValidationError> errors) => new(
+        statusCode: HttpStatusCode.BadRequest,
+        message: "Validation Failed, Please check errors and try again.",
+        errors: errors);
 }

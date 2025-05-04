@@ -4,7 +4,7 @@ using OrderService.Application.Results;
 
 namespace OrderService.Application.Services.Interfaces;
 
-public interface IOrderService
+public interface IOrdersService
 {
     Task<ServiceResult<OrderDto>> CreateOrder(
         Guid userId,
