@@ -8,15 +8,13 @@ public class InMemoryUserRepository : IUserRepository
 {
     public async Task<User?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        await Task.Delay(10, cancellationToken);
-
-        return InMemoryDB.Users.FirstOrDefault(x => x.Id == id);
+        var user = InMemoryDB.Users.FirstOrDefault(x => x.Id == id);
+        return await Task.FromResult(user);
     }
 
     public async Task<User?> FindByUserNameAsync(string username, CancellationToken cancellationToken = default)
     {
-        await Task.Delay(10, cancellationToken);
-
-        return InMemoryDB.Users.FirstOrDefault(x => x.UserName == username.ToLower());
+        var user = InMemoryDB.Users.FirstOrDefault(x => x.UserName == username.ToLower());
+        return await Task.FromResult(user);
     }
 }

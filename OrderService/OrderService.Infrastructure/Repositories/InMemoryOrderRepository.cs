@@ -8,8 +8,6 @@ public class InMemoryOrderRepository(InMemoryDB db) : IOrderRepository
 {
     public async Task<Order> CreateOrder(Order order, CancellationToken cancellationToken = default)
     {
-        await Task.Delay(10, cancellationToken);
-
         if (db.Orders.TryGetValue(order.UserId, out List<Order>? orders))
         {
             orders.Add(order);
@@ -24,8 +22,6 @@ public class InMemoryOrderRepository(InMemoryDB db) : IOrderRepository
 
     public async Task<Order?> GetOrder(Guid userId, Guid orderId, CancellationToken cancellationToken = default)
     {
-        await Task.Delay(10, cancellationToken);
-
         db.Orders.TryGetValue(userId, out var orders);
 
         if (orders is null || orders.Count == 0)
@@ -40,8 +36,6 @@ public class InMemoryOrderRepository(InMemoryDB db) : IOrderRepository
 
     public async Task<bool> UpdateOrder(Order order, CancellationToken cancellationToken = default)
     {
-        await Task.Delay(10, cancellationToken);
-
         db.Orders.TryGetValue(order.UserId, out var orders);
 
         if (orders is null || orders.Count == 0)

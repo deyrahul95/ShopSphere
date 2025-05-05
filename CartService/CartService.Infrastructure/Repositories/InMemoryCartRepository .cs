@@ -8,8 +8,6 @@ public class InMemoryCartRepository(InMemoryDB db) : ICartRepository
 {
     public async Task<Cart> Create(Cart cart, CancellationToken cancellationToken = default)
     {
-        await Task.Delay(10, cancellationToken);
-
         db.Carts[cart.UserId] = cart;
 
         return await Task.FromResult(cart);
@@ -17,8 +15,6 @@ public class InMemoryCartRepository(InMemoryDB db) : ICartRepository
 
     public async Task<Cart?> GetByUserId(Guid userId, CancellationToken cancellationToken = default)
     {
-        await Task.Delay(10, cancellationToken);
-
         db.Carts.TryGetValue(userId, out var cart);
 
         return await Task.FromResult(cart);
