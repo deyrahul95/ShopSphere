@@ -7,6 +7,10 @@ public class OrderResults
     public static ServiceResult NoContent => new(
         statusCode: HttpStatusCode.NoContent,
         message: string.Empty);
+
+    public static ServiceResult InternalServerError => new(
+        statusCode: HttpStatusCode.InternalServerError,
+        message: "Some unknown error occurred! Please try after sometime.");
 }
 
 public class OrderResults<T> where T : class

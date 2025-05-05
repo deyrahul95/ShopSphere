@@ -36,8 +36,9 @@ public class OrdersController(IOrdersService orderService, ILogger<OrdersControl
             cancellationToken: cancellationToken);
 
         logger.LogInformation(
-            "Completed processing create order request. User Id: {UserId}, Status Code: {StatusCode}",
+            "Completed processing create order request. User Id: {UserId}, Order Id: {OrderId}, Status Code: {StatusCode}",
             userId,
+            response.Data?.Id.ToString() ?? "N/A",
             response.StatusCode);
         return StatusCode((int)response.StatusCode, response);
     }

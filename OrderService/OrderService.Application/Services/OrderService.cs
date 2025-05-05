@@ -55,6 +55,10 @@ public class OrdersService(
                 cartDto: cart,
                 cancellationToken: cancellationToken);
 
+            logger.LogInformation(
+                "Order created successfully. Order: {@Order}",
+                newOrder);
+
             return OrderResults<OrderDto>.OrderCreated(newOrder.ToDto());
         }
         catch (ValidationException ex)
@@ -100,6 +104,10 @@ public class OrdersService(
                 return OrderResults<OrderDto>.OrderNotFound(orderId);
             }
 
+            logger.LogInformation(
+                "Order fetched successfully. Order: {@Order}",
+                order);
+
             return OrderResults<OrderDto>.OrderFetched(order.ToDto());
         }
         catch (Exception ex)
@@ -139,8 +147,19 @@ public class OrdersService(
             order.UpdateOrderState(request.OrderState);
             order.UpdatePaymentState(request.PaymentState);
             
-            await orderRepository.UpdateOrder(order: order, cancellationToken: cancellationToken);
+            var isSuccess = await orderRepository.UpdateOrder(order: order, cancellationToken: cancellationToken);
 
+            if (isSuccess is false)
+            {
+                logger.LogWarning(
+                    "Order updated failed in repository. Order: {@Order}",
+                    order);
+                return OrderResults.InternalServerError;
+            }
+
+            logger.LogInformation(
+                "Order updated successfully. Order: {@Order}",
+                order);
             return OrderResults.NoContent;
         }
         catch (Exception ex)
@@ -194,8 +213,8 @@ public class OrdersService(
         }
 
         logger.LogInformation(
-            "Cart details fetched successfully.Status Code: {StatusCode}",
-            result.StatusCode);
+            "Cart details fetched successfully.Result: {@Result}",
+            result);
         return (true, result);
     }
 
@@ -209,6 +228,8 @@ public class OrdersService(
                 productId: cartItem.ProductId,
                 quantity: cartItem.Quantity,
                 price: cartItem.Price);
+
+            orderItems.Add(orderItem);
         }
 
         var order = Order.Create(userId: userId, items: orderItems);

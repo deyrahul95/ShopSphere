@@ -186,9 +186,9 @@ public class CartsService(
         }
 
         logger.LogInformation(
-            "Product data fetched successfully. Product Id: {ProductId}, Status Code: {StatusCode}",
+            "Product data fetched successfully. Product Id: {ProductId}, Result: {@Result}",
             productId,
-            result.StatusCode);
+            result);
         return (true, result);
     }
 

@@ -10,7 +10,14 @@ public class InMemoryOrderRepository(InMemoryDB db) : IOrderRepository
     {
         await Task.Delay(10, cancellationToken);
 
-        db.Orders[order.UserId].Add(order);
+        if (db.Orders.TryGetValue(order.UserId, out List<Order>? orders))
+        {
+            orders.Add(order);
+        }
+        else
+        {
+            db.Orders[order.UserId] = [order];
+        }
 
         return await Task.FromResult(order);
     }

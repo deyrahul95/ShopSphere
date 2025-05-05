@@ -38,8 +38,21 @@ services:
     networks:
       - app_network
     depends_on:
-      - user_service
       - product_service
+      - seq
+
+  order_service:
+    build:
+      context: ./OrderService
+      dockerfile: Dockerfile
+    image: order-service:latest
+    container_name: order-service-1
+    ports:
+      - "5150:8080"
+    networks:
+      - app_network
+    depends_on:
+      - cart_service
       - seq
 
   seq:
