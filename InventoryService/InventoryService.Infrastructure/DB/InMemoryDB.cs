@@ -4,7 +4,7 @@ namespace InventoryService.Infrastructure.DB;
 
 public class InMemoryDB
 {
-    public readonly static List<ProductStock> ProductStocks = [
+    public readonly List<ProductStock> ProductStocks = [
         new ProductStock
         {
             ProductId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
