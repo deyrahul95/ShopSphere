@@ -7,7 +7,7 @@ public class InMemoryDB
 {
     public readonly static List<User> Users = [
         new User () {
-            Id = Guid.NewGuid (),
+            Id = new Guid("e6a1d6ff-4c4e-4d58-97f9-d2be43a77331"),
             Name = "Admin",
             Email = "admin@shopsphere.com",
             UserName = "admin_user",
@@ -18,7 +18,7 @@ public class InMemoryDB
             UpdatedAt = DateTime.UtcNow,
         },
         new User () {
-            Id = Guid.NewGuid (),
+            Id = new Guid("d92a706b-537e-4f71-a9e0-6111c4f7899e"),
             Name = "Default",
             Email = "default@shopsphere.com",
             UserName = "default_user",
