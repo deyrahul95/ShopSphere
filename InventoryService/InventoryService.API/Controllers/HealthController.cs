@@ -10,6 +10,6 @@ public class HealthController : ControllerBase
 {
     public IActionResult Health()
     {
-        return Ok("Api is healthy");
+        return Ok("InventoryService is healthy");
     }
 }
