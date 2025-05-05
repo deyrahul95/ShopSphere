@@ -65,7 +65,7 @@ public class CartController(ICartsService cartsService, ILogger<CartController> 
 
     [HttpDelete]
     [Route("removed")]
-    public async Task<ActionResult<ServiceResult<CartDto>>> RemoveItemFromCart(
+    public async Task<ActionResult<ServiceResult>> RemoveItemFromCart(
         [FromBody] RemovedFromCartRequest request,
         CancellationToken cancellationToken = default)
     {
@@ -99,7 +99,7 @@ public class CartController(ICartsService cartsService, ILogger<CartController> 
     }
 
     [HttpDelete]
-    public async Task<ActionResult<ServiceResult<CartDto>>> ClearCart(CancellationToken cancellationToken = default)
+    public async Task<ActionResult<ServiceResult>> ClearCart(CancellationToken cancellationToken = default)
     {
         var userId = GetLoggedInUserId();
 
