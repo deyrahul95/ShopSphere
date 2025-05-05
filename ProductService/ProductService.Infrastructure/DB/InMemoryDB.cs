@@ -34,7 +34,7 @@ public class InMemoryDB
             Category = "Smartphone",
             Description = "8GB RAM, 128GB Storage, Google Tensor G2 chip, 6.3-inch OLED display",
             Price = 59999.00M,
-            InStock = true,
+            InStock = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         },
@@ -56,7 +56,7 @@ public class InMemoryDB
             Category = "Laptop",
             Description = "Apple M2 chip, 8GB RAM, 256GB SSD, 13.6-inch Retina display",
             Price = 99999.00M,
-            InStock = true,
+            InStock = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         },
@@ -89,7 +89,7 @@ public class InMemoryDB
             Category = "Tablet",
             Description = "M1 chip, 8GB RAM, 128GB Storage, 11-inch Liquid Retina display",
             Price = 79999.00M,
-            InStock = true,
+            InStock = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         },
@@ -100,7 +100,7 @@ public class InMemoryDB
             Category = "Tablet",
             Description = "8GB RAM, 128GB Storage, Snapdragon 8 Gen 1, 11-inch display",
             Price = 64999.00M,
-            InStock = true,
+            InStock = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         },
@@ -111,7 +111,7 @@ public class InMemoryDB
             Category = "Monitor",
             Description = "27-inch 5K display, Thunderbolt 3, P3 wide color gamut",
             Price = 129999.00M,
-            InStock = true,
+            InStock = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         },
@@ -144,7 +144,7 @@ public class InMemoryDB
             Category = "Mouse",
             Description = "Wireless mouse with ergonomic design, customizable buttons",
             Price = 9999.00M,
-            InStock = true,
+            InStock = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         },
@@ -177,7 +177,7 @@ public class InMemoryDB
             Category = "Speaker",
             Description = "Portable Bluetooth speaker with 360-degree sound",
             Price = 24999.00M,
-            InStock = true,
+            InStock = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         },
@@ -221,7 +221,7 @@ public class InMemoryDB
             Category = "Headphones",
             Description = "Active noise cancellation, 28 hours of battery life, IPX7 water resistance",
             Price = 19999.00M,
-            InStock = true,
+            InStock = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         },
@@ -243,7 +243,7 @@ public class InMemoryDB
             Category = "Laptop",
             Description = "Intel Core i5, 8GB RAM, 512GB SSD, 13.5-inch PixelSense touchscreen",
             Price = 109999.00M,
-            InStock = true,
+            InStock = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         },
@@ -287,7 +287,7 @@ public class InMemoryDB
             Category = "Tablet",
             Description = "Intel Pentium Gold, 4GB RAM, 64GB Storage, 10.5-inch touchscreen",
             Price = 49999.00M,
-            InStock = true,
+            InStock = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         },
@@ -353,7 +353,7 @@ public class InMemoryDB
             Category = "Speaker",
             Description = "Portable Bluetooth speaker with 24-hour battery life and IPX7 waterproof",
             Price = 6999.00M,
-            InStock = true,
+            InStock = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         },
@@ -375,7 +375,7 @@ public class InMemoryDB
             Category = "Footwear",
             Description = "Men's running shoes with a stylish design and comfortable cushioning.",
             Price = 12999.00M,
-            InStock = true,
+            InStock = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         },
@@ -408,7 +408,7 @@ public class InMemoryDB
             Category = "Accessories",
             Description = "Versatile backpack with ample storage and comfortable fit.",
             Price = 8999.00M,
-            InStock = true,
+            InStock = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         },
@@ -452,7 +452,7 @@ public class InMemoryDB
             Category = "Drinkware",
             Description = "Durable stainless steel tumbler with double-wall vacuum insulation.",
             Price = 2999.00M,
-            InStock = true,
+            InStock = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         },
@@ -474,7 +474,7 @@ public class InMemoryDB
             Category = "Kitchen Appliances",
             Description = "Powerful blender with 7 speeds and a 1200-watt motor.",
             Price = 8999.00M,
-            InStock = true,
+            InStock = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         }

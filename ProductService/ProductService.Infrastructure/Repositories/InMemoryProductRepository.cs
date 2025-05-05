@@ -9,18 +9,16 @@ public class InMemoryProductRepository : IProductRepository
 {
     public async Task<Product?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        await Task.Delay(10, cancellationToken);
-
-        var product = InMemoryDB.Products.FirstOrDefault(x => x.Id == id);
+        var product = InMemoryDB.Products.FirstOrDefault(item => item.Id == id);
 
         return await Task.FromResult(product);
     }
 
     public async Task<PaginatedResult<Product>> SearchProductsAsync(ProductSearchFilters searchFilters, CancellationToken cancellationToken = default)
     {
-        await Task.Delay(50, cancellationToken);
-
-        var query = InMemoryDB.Products.AsQueryable();
+        var query = InMemoryDB.Products
+                                            .AsQueryable()
+                                            .Where(item => item.InStock);
 
         if (string.IsNullOrEmpty(searchFilters.Name) is false)
         {
@@ -42,10 +40,12 @@ public class InMemoryProductRepository : IProductRepository
             .Take(searchFilters.PageSize)
             .ToList();
 
-        return new PaginatedResult<Product>(
+        var paginatedResult = new PaginatedResult<Product>(
             pageNumber: searchFilters.PageNumber,
             pageSize: searchFilters.PageSize,
             totalItems: totalItems,
             items: items);
+
+        return await Task.FromResult(paginatedResult);
     }
 }
