@@ -16,6 +16,11 @@ public interface IOrdersService
         Guid userId,
         CancellationToken cancellationToken = default);
 
+    Task<ServiceResult<OrderStatusResponse>> GetOrderStatus(
+        Guid orderId,
+        Guid userId,
+        CancellationToken cancellationToken = default);
+
     Task<ServiceResult> UpdateOrderStatus(
         Guid userId,
         UpdateStatusRequest request,

@@ -1,14 +1,20 @@
+using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OrderService.Application.Results;
 
 namespace OrderService.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[AllowAnonymous]
 public class HealthController : ControllerBase
 {
     [HttpGet]
-    public IActionResult Health()
+    public ActionResult<ServiceResult> Health()
     {
-        return Ok("Api is healthy!");
+        var response = new ServiceResult(HttpStatusCode.OK, "Api is healthy");
+
+        return Ok(response);
     }
 }

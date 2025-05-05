@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using OrderService.Application.DTOs;
@@ -24,5 +25,21 @@ public class CartHttpClient(
             response.StatusCode);
 
         return await response.Content.ReadFromJsonAsync<ServiceResult<CartDto>>();
+    }
+
+    public async Task<HttpStatusCode> ClearCart()
+    {
+        var requestPath = $"/api/cart";
+        var uri = $"{httpClient.BaseAddress}{requestPath}";
+
+        logger.LogInformation("Start processing clear cart request. URI: {URI}", uri);
+        var response = await httpClient.DeleteAsync(requestPath);
+
+        logger.LogInformation(
+            "Completed processing clear cart request. URI: {URI}, StatusCode: {StatusCode}",
+            uri,
+            response.StatusCode);
+
+        return response.StatusCode;
     }
 }

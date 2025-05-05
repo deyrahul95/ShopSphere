@@ -74,6 +74,37 @@ public class OrdersController(IOrdersService orderService, ILogger<OrdersControl
         return StatusCode((int)response.StatusCode, response);
     }
 
+    [HttpGet]
+    [Route("{id:guid}/status")]
+    public async Task<ActionResult<ServiceResult<OrderDto>>> GetOrderStatus(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var userId = GetLoggedInUserId();
+
+        if (userId.Equals(Guid.Empty))
+        {
+            return Unauthorized();
+        }
+
+        logger.LogInformation(
+            "Start processing get order status request. User Id: {UserId}, Order Id: {OrderId}",
+            userId,
+            id);
+
+        var response = await orderService.GetOrderStatus(
+            orderId: id,
+            userId: userId,
+            cancellationToken: cancellationToken);
+
+        logger.LogInformation(
+            "Completed processing get order status request. User Id: {UserId}, Order Id: {OrderId} Status Code: {StatusCode}",
+            userId,
+            id,
+            response.StatusCode);
+        return StatusCode((int)response.StatusCode, response);
+    }
+
     private Guid GetLoggedInUserId()
     {
         logger.LogInformation("Fetching user name identifier claim");

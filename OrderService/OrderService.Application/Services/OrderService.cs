@@ -59,6 +59,13 @@ public class OrdersService(
                 "Order created successfully. Order: {@Order}",
                 newOrder);
 
+            isSuccess = await ClearCart();
+
+            if (isSuccess is false)
+            {
+                return OrderResults<OrderDto>.HttpRequestFailed(result);
+            }
+
             return OrderResults<OrderDto>.OrderCreated(newOrder.ToDto());
         }
         catch (ValidationException ex)
@@ -123,6 +130,50 @@ public class OrdersService(
         }
     }
 
+    public async Task<ServiceResult<OrderStatusResponse>> GetOrderStatus(
+        Guid orderId,
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var order = await FetchOrderById(
+                orderId: orderId,
+                userId: userId,
+                cancellationToken: cancellationToken);
+
+            if (order is null)
+            {
+                logger.LogWarning(
+                    "Order not found. Order Id: {OrderId}, User Id: {UserId}",
+                    orderId,
+                    userId);
+                return OrderResults<OrderStatusResponse>.OrderNotFound(orderId);
+            }
+
+            logger.LogInformation(
+                "Order fetched successfully. Order: {@Order}",
+                order);
+
+            var orderStatusResponse = new OrderStatusResponse(
+                OrderStatus: order.OrderState,
+                OrderPaymentStatus: order.PaymentState);
+
+            return OrderResults<OrderStatusResponse>.OrderFetched(orderStatusResponse);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(
+                ex,
+                "Failed to fetch order. Order Id: {OrderId}, User Id: {UserId}, Error: {Error}",
+                orderId,
+                userId,
+                ex.Message);
+
+            return OrderResults<OrderStatusResponse>.InternalServerError;
+        }
+    }
+
     public async Task<ServiceResult> UpdateOrderStatus(
         Guid userId,
         UpdateStatusRequest request,
@@ -143,10 +194,10 @@ public class OrdersService(
                     userId);
                 return OrderResults<OrderDto>.OrderNotFound(request.OrderId);
             }
-            
+
             order.UpdateOrderState(request.OrderState);
             order.UpdatePaymentState(request.PaymentState);
-            
+
             var isSuccess = await orderRepository.UpdateOrder(order: order, cancellationToken: cancellationToken);
 
             if (isSuccess is false)
@@ -207,13 +258,13 @@ public class OrdersService(
         if (result == null || result.StatusCode != HttpStatusCode.OK)
         {
             logger.LogWarning(
-                "Failed to fetched cart details.Result: {@Result}",
+                "Failed to fetched cart details. Result: {@Result}",
                 result);
             return (false, result);
         }
 
         logger.LogInformation(
-            "Cart details fetched successfully.Result: {@Result}",
+            "Cart details fetched successfully. Result: {@Result}",
             result);
         return (true, result);
     }
@@ -235,5 +286,20 @@ public class OrdersService(
         var order = Order.Create(userId: userId, items: orderItems);
 
         return await orderRepository.CreateOrder(order: order, cancellationToken: cancellationToken);
+    }
+
+    private async Task<bool> ClearCart()
+    {
+        logger.LogInformation("Start clearing cart details.");
+        var statusCode = await cartHttpClient.ClearCart();
+
+        if (statusCode != HttpStatusCode.NoContent)
+        {
+            logger.LogWarning("Failed to cleared cart details");
+            return false;
+        }
+
+        logger.LogInformation("Cart details cleared successfully");
+        return true;
     }
 }
