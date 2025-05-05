@@ -1,3 +1,5 @@
+using System.Net;
+using InventoryService.Application.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,8 +10,12 @@ namespace InventoryService.API.Controllers;
 [AllowAnonymous]
 public class HealthController : ControllerBase
 {
-    public IActionResult Health()
+    public ActionResult<ServiceResult> Health()
     {
-        return Ok("InventoryService is healthy");
+        var response = new ServiceResult(
+            statusCode: HttpStatusCode.OK,
+            message: "InventoryService is healthy");
+
+        return Ok(response);
     }
 }
