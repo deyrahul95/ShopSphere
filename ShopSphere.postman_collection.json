@@ -205,13 +205,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{productservice}}/products/0dd9f569-4f67-4352-af51-745947badc77",
+							"raw": "{{productservice}}/products/{{productId}}",
 							"host": [
 								"{{productservice}}"
 							],
 							"path": [
 								"products",
-								"0dd9f569-4f67-4352-af51-745947badc77"
+								"{{productId}}"
 							]
 						}
 					},
@@ -304,8 +304,11 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"exec": [],
-								"type": "text/javascript"
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -314,7 +317,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"productId\": \"{{productId}}\",\r\n\t\"quantity\": 1\r\n}",
+							"raw": "{\r\n\t\"productId\": \"{{productId}}\",\r\n\t\"quantity\": \"{{productQuantity}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -418,6 +421,7 @@
 									"\r",
 									"if(res.statusCode === 201){\r",
 									"\tpm.collectionVariables.set(\"orderId\", res.data.id);\r",
+									"\tpm.collectionVariables.set(\"orderAmount\", res.data.totalPrice);\r",
 									"}"
 								],
 								"type": "text/javascript",
@@ -427,8 +431,11 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"exec": [],
-								"type": "text/javascript"
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -591,7 +598,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"productId\": \"44444444-4444-4444-4444-444444444444\",\r\n\t\"quantity\": 25\r\n}",
+							"raw": "{\r\n\t\"productId\": \"{{productId}}\",\r\n\t\"quantity\": \"{{productQuantity}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -633,6 +640,97 @@
 							"path": [
 								"inventory",
 								"44444444-4444-4444-4444-444444444444"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PaymentService",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{paymentservice}}/health",
+							"host": [
+								"{{paymentservice}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Processed payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"\tpm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"orderId\": \"{{orderId}}\",\r\n\t\"amount\": \"{{orderAmount}}\",\r\n\t\"paymentMode\": \"CreditCard\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{paymentservice}}/payment/process",
+							"host": [
+								"{{paymentservice}}"
+							],
+							"path": [
+								"payment",
+								"process"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Payment Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{paymentservice}}/payment/{{orderId}}",
+							"host": [
+								"{{paymentservice}}"
+							],
+							"path": [
+								"payment",
+								"{{orderId}}"
 							]
 						}
 					},
@@ -717,6 +815,21 @@
 		{
 			"key": "inventoryservice",
 			"value": "http://localhost:5160/api",
+			"type": "string"
+		},
+		{
+			"key": "paymentservice",
+			"value": "http://localhost:5170/api",
+			"type": "string"
+		},
+		{
+			"key": "orderAmount",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "productQuantity",
+			"value": "1",
 			"type": "string"
 		}
 	]
