@@ -4,6 +4,7 @@ using CartService.API.Middlewares;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Exporter;
+using CartService.API.Constants;
 
 namespace CartService.API.Extensions;
 
@@ -15,15 +16,15 @@ public static class ServiceConfigurations
         services.AddApplicationServices(configuration);
 
         services.AddOpenTelemetry()
-            .ConfigureResource(resource => resource.AddService("CartService"))
+            .ConfigureResource(resource => resource.AddService(OpenTelemetryConstants.ServiceName))
             .WithTracing(tracing =>
             {
                 tracing
                     .AddHttpClientInstrumentation()
                     .AddAspNetCoreInstrumentation()
-                    .AddOtlpExporter(options => 
+                    .AddOtlpExporter(options =>
                     {
-                        options.Endpoint = new Uri(configuration["OTLPEndpoint"] ?? "");
+                        options.Endpoint = new Uri(configuration[OpenTelemetryConstants.OTLPEndpoint] ?? "");
                         options.Protocol = OtlpExportProtocol.HttpProtobuf;
                     });
             });
