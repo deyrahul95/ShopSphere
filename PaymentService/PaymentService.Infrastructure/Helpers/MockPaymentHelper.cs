@@ -9,29 +9,29 @@ public static class MockPaymentHelper
 
     public static async Task SimulateNetworkDelay()
     {
-        await Task.Delay(_random.Next(300, 1500));
+        await Task.Delay(_random.Next(1000, 3000));
     }
 
     public static void MaybeThrowRandomError(PaymentMode mode)
     {
         var nextValue = _random.NextDouble();
 
-        if (nextValue < 0.1)
+        if (nextValue < 0.2)
         {
             throw new PaymentException("Bank server busy. Please try again later.");
         }
 
-        if (nextValue < 0.25)
+        if (nextValue < 0.35)
         {
             throw new PaymentException("Insufficient balance.");
         }
 
-        if ((mode == PaymentMode.CreditCard || mode == PaymentMode.DebitCard) && nextValue < 0.4)
+        if ((mode == PaymentMode.CreditCard || mode == PaymentMode.DebitCard) && nextValue < 0.5)
         {
             throw new PaymentException("Invalid card details.");
         }
 
-        if (nextValue < 0.5)
+        if (nextValue < 0.65)
         {
             throw new TimeoutException("Payment gateway timed out.");
         }

@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using PaymentService.Application.DTOs;
 using PaymentService.Application.Extensions;
+using PaymentService.Application.Handlers;
 using PaymentService.Application.Models;
 using PaymentService.Application.Results;
 using PaymentService.Application.Services.Interfaces;
@@ -15,6 +16,7 @@ namespace PaymentService.Application.Services;
 public class PaymentServiceImpl(
     IPaymentRepository paymentRepository,
     IPaymentProviderFactory paymentProviderFactory,
+    RetryHandler retryHandler,
     ILogger<PaymentServiceImpl> logger) : IPaymentService
 {
     public async Task<ServiceResult<PaymentDto>> ProcessPayment(
@@ -36,13 +38,22 @@ public class PaymentServiceImpl(
                 amount: request.Amount,
                 paymentMode: request.PaymentMode);
 
-            var paymentStatus = await MakePayment(
+            (PaymentStatus paymentStatus, string message) = await MakePayment(
                 paymentMode: request.PaymentMode,
                 amount: payment.Amount,
                 cancellationToken: cancellationToken);
 
             payment.UpdateStatus(paymentStatus);
             var updatedPayment = await paymentRepository.Create(payment, cancellationToken);
+
+            if (paymentStatus == PaymentStatus.Failed)
+            {
+                logger.LogInformation(
+                    "Payment transaction failed. Order Id: {OrderId}, Error: {Error}",
+                    request.OrderId,
+                    message);
+                return PaymentResults<PaymentDto>.PaymentFailed(message);
+            }
 
             logger.LogInformation(
                 "Payment processed successfully. Payment: {@Payment}",
@@ -100,12 +111,31 @@ public class PaymentServiceImpl(
         }
     }
 
-    private async Task<PaymentStatus> MakePayment(PaymentMode paymentMode, decimal amount, CancellationToken cancellationToken)
+    private async Task<(PaymentStatus paymentStatus, string message)> MakePayment(
+        PaymentMode paymentMode,
+        decimal amount,
+        CancellationToken cancellationToken)
     {
-        var paymentProvider = paymentProviderFactory.GetPaymentProvider(paymentMode);
+        try
+        {
+            var paymentProvider = paymentProviderFactory.GetPaymentProvider(paymentMode);
 
-        var status = await paymentProvider.ProcessTransaction(amount: amount, cancellationToken: cancellationToken);
-        return status;
+            var paymentStatus = await retryHandler.ExecuteWithRetryAsync(
+                operationName: $"MakePayment-{paymentMode}",
+                action: async token => await paymentProvider.ProcessTransaction(amount, token),
+                cancellationToken: cancellationToken);
+
+            return (paymentStatus, string.Empty);
+        }
+        catch (PaymentException ex)
+        {
+            logger.LogError(
+                ex,
+                "Payment failed. Error: {Error}",
+                ex.Message);
+
+            return (PaymentStatus.Failed, ex.Message);
+        }
     }
 
     private async Task<PaymentDto?> GetPaymentByOrderId(

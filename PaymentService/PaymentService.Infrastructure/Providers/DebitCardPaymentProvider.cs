@@ -13,23 +13,15 @@ public class DebitCardPaymentProvider(ILogger<DebitCardPaymentProvider> logger) 
     {
         logger.LogInformation("Starting {Card} payment for amount: {Amount}", _paymentMode.ToString(), amount);
 
-        try
-        {
-            MockPaymentHelper.EnforceTransactionLimit(_paymentMode, amount);
+        MockPaymentHelper.EnforceTransactionLimit(_paymentMode, amount);
 
-            await MockPaymentHelper.SimulateNetworkDelay();
+        await MockPaymentHelper.SimulateNetworkDelay();
 
-            cancellationToken.ThrowIfCancellationRequested();
-            MockPaymentHelper.MaybeThrowRandomError(_paymentMode);
+        cancellationToken.ThrowIfCancellationRequested();
+        MockPaymentHelper.MaybeThrowRandomError(_paymentMode);
 
-            var status = PaymentStatus.Completed;
-            logger.LogInformation("{Card} Payment result: {Status}", _paymentMode.ToString(), status);
-            return status;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "{Card} payment failed due to error.", _paymentMode.ToString());
-            return PaymentStatus.Failed;
-        }
+        var status = PaymentStatus.Completed;
+        logger.LogInformation("{Card} Payment result: {Status}", _paymentMode.ToString(), status);
+        return status;
     }
 }

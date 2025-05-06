@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PaymentService.Application.Handlers;
 using PaymentService.Application.Services;
 using PaymentService.Application.Services.Interfaces;
 
@@ -9,6 +10,7 @@ public static class ServiceConfigurations
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddSingleton<RetryHandler>();
         services.AddScoped<IPaymentService, PaymentServiceImpl>();
         
         return services;

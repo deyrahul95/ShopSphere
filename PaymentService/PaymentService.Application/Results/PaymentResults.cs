@@ -37,4 +37,8 @@ public class PaymentResults<T> where T : class
         statusCode: HttpStatusCode.OK,
         message: "Payment processed successfully.",
         data: data);
+
+    public static ServiceResult<T> PaymentFailed(string message) => new(
+        statusCode: HttpStatusCode.BadRequest,
+        message: message);
 }
