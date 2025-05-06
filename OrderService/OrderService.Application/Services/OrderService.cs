@@ -6,6 +6,7 @@ using OrderService.Application.Models;
 using OrderService.Application.Results;
 using OrderService.Application.Services.Interfaces;
 using OrderService.Domain.Entities;
+using OrderService.Domain.Enums;
 using OrderService.Domain.Exceptions;
 using OrderService.Domain.Repositories;
 
@@ -14,6 +15,7 @@ namespace OrderService.Application.Services;
 public class OrdersService(
     IOrderRepository orderRepository,
     ICartHttpClient cartHttpClient,
+    IInventoryHttpClient inventoryHttpClient,
     ILogger<OrdersService> logger) : IOrdersService
 {
     public async Task<ServiceResult<OrderDto>> CreateOrder(
@@ -50,23 +52,40 @@ public class OrdersService(
                 return OrderResults<OrderDto>.NoItemsFound(request.CartId);
             }
 
-            var newOrder = await CreateNewOrder(
+            var order = await CreateNewOrder(
                 userId: userId,
                 cartDto: cart,
                 cancellationToken: cancellationToken);
 
             logger.LogInformation(
                 "Order created successfully. Order: {@Order}",
-                newOrder);
+                order);
 
             isSuccess = await ClearCart();
 
             if (isSuccess is false)
             {
-                return OrderResults<OrderDto>.HttpRequestFailed(result);
+                return OrderResults<OrderDto>.ClearCartFailed(result: result, data: order.ToDto());
             }
 
-            return OrderResults<OrderDto>.OrderCreated(newOrder.ToDto());
+            var isStockAvailable = await CheckInventory(
+                orderItems: order.Items,
+                cancellationToken: cancellationToken);
+
+            if (isStockAvailable is false)
+            {
+                order.UpdateOrderState(OrderStatus.Cancelled);
+                await orderRepository.UpdateOrder(order: order, cancellationToken: cancellationToken);
+
+                return OrderResults<OrderDto>.StockUnavailable(order.ToDto());
+            }
+
+            var paymentStatus = await MakePayment();
+
+            order.UpdatePaymentState(paymentStatus);
+            await orderRepository.UpdateOrder(order: order, cancellationToken: cancellationToken);
+
+            return OrderResults<OrderDto>.OrderCreated(order.ToDto());
         }
         catch (ValidationException ex)
         {
@@ -301,5 +320,44 @@ public class OrdersService(
 
         logger.LogInformation("Cart details cleared successfully");
         return true;
+    }
+
+    private async Task<bool> CheckInventory(List<OrderItem> orderItems, CancellationToken cancellationToken)
+    {
+        foreach (var item in orderItems)
+        {
+            var checkInventoryRequest = new CheckInventoryRequest(
+                ProductId: item.ProductId,
+                Quantity: item.Quantity);
+
+            logger.LogInformation("Start fetching inventory details.Product Id: {ProductId}", item.ProductId);
+
+            var result = await inventoryHttpClient.CheckInventory(
+                request: checkInventoryRequest,
+                cancellationToken: cancellationToken);
+
+            if (result == null || result.StatusCode != HttpStatusCode.OK)
+            {
+                logger.LogWarning(
+                    "Failed to fetched inventory details. Result: {@Result}",
+                    result);
+                return false;
+            }
+
+            logger.LogInformation("Inventory details fetched successfully. Product Id: {ProductId}", item.ProductId);
+
+            if (result.Data?.Available is false)
+            {
+                logger.LogWarning("Product is out of stock.Product Id: {ProductId}", item.ProductId);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private async Task<OrderPaymentStatus> MakePayment()
+    {
+        throw new NotImplementedException();
     }
 }
