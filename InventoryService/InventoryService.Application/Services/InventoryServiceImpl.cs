@@ -33,10 +33,10 @@ public class InventoryServiceImpl(
             }
 
             logger.LogInformation(
-                "Product stock details fetched successfully. Product Id: {ProductId}",
-                request.ProductId);
+                "Product stock details fetched successfully. Product Stock: {@ProductStock}",
+                productStock);
 
-            var isAvailable = productStock.AvailableQuantity < request.Quantity;
+            var isAvailable = productStock.AvailableQuantity >= request.Quantity;
 
             var result = new CheckInventoryResponse(Available: isAvailable);
             return InventoryResults<CheckInventoryResponse>.Success(result);
