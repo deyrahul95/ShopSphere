@@ -30,6 +30,9 @@
 				{
 					"name": "Health Check",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -112,6 +115,9 @@
 				{
 					"name": "Health Check",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -139,9 +145,19 @@
 									"\r",
 									"const res = pm.response.json();\r",
 									"\r",
-									"if(res.statusCode === 200){\r",
+									"if(res.statusCode === 200 && res.data.items.length > 0){\r",
 									"\tpm.collectionVariables.set(\"productId\", res.data.items[0].id);\r",
 									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -152,7 +168,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{productservice}}/products/search?category=headphones&name=samsung&pageNumber=1&pageSize=5",
+							"raw": "{{productservice}}/products/search?name=dell&pageNumber=1&pageSize=5",
 							"host": [
 								"{{productservice}}"
 							],
@@ -163,11 +179,12 @@
 							"query": [
 								{
 									"key": "category",
-									"value": "headphones"
+									"value": "laptop",
+									"disabled": true
 								},
 								{
 									"key": "name",
-									"value": "samsung"
+									"value": "dell"
 								},
 								{
 									"key": "pageNumber",
@@ -208,6 +225,9 @@
 				{
 					"name": "Health Check",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -235,6 +255,13 @@
 								],
 								"type": "text/javascript",
 								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -272,6 +299,13 @@
 								],
 								"type": "text/javascript",
 								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -352,6 +386,9 @@
 				{
 					"name": "Health Check",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -385,6 +422,13 @@
 								],
 								"type": "text/javascript",
 								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -426,6 +470,13 @@
 								"type": "text/javascript",
 								"packages": {}
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -458,6 +509,13 @@
 								"type": "text/javascript",
 								"packages": {}
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -472,6 +530,109 @@
 								"orders",
 								"{{orderId}}",
 								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "InventoryService",
+			"item": [
+				{
+					"name": "Health Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"\tpm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{inventoryservice}}/health",
+							"host": [
+								"{{inventoryservice}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check inventory",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"productId\": \"44444444-4444-4444-4444-444444444444\",\r\n\t\"quantity\": 25\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{inventoryservice}}/inventory/check",
+							"host": [
+								"{{inventoryservice}}"
+							],
+							"path": [
+								"inventory",
+								"check"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update inventory",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"quantity\": 2,\r\n\t\"isOrdered\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{inventoryservice}}/inventory/44444444-4444-4444-4444-444444444444",
+							"host": [
+								"{{inventoryservice}}"
+							],
+							"path": [
+								"inventory",
+								"44444444-4444-4444-4444-444444444444"
 							]
 						}
 					},
@@ -551,6 +712,11 @@
 		{
 			"key": "orderId",
 			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "inventoryservice",
+			"value": "http://localhost:5160/api",
 			"type": "string"
 		}
 	]
