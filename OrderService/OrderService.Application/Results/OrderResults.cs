@@ -50,11 +50,6 @@ public class OrderResults<T> where T : class
         message: "Validation Failed, Please check errors and try again.",
         errors: errors);
 
-    public static ServiceResult<T> ClearCartFailed(ServiceResult? result, T data) => new(
-        statusCode: result?.StatusCode ?? HttpStatusCode.BadRequest,
-        message: result?.Message ?? "Failed to removed cart items.",
-        data: data);
-
     public static ServiceResult<T> StockUnavailable(T data) => new(
         statusCode: HttpStatusCode.BadRequest,
         message: "Order canceled due to item is out of stock.",

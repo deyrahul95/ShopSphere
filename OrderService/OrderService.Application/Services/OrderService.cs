@@ -16,6 +16,7 @@ public class OrdersService(
     IOrderRepository orderRepository,
     ICartHttpClient cartHttpClient,
     IInventoryHttpClient inventoryHttpClient,
+    IPaymentHttpClient paymentHttpClient,
     ILogger<OrdersService> logger) : IOrdersService
 {
     public async Task<ServiceResult<OrderDto>> CreateOrder(
@@ -25,7 +26,7 @@ public class OrdersService(
     {
         try
         {
-            var (isSuccess, result) = await FetchCart();
+            var (isSuccess, result) = await FetchCart(cancellationToken);
 
             if (isSuccess is false)
             {
@@ -55,18 +56,14 @@ public class OrdersService(
             var order = await CreateNewOrder(
                 userId: userId,
                 cartDto: cart,
+                paymentMode: request.PaymentMode,
                 cancellationToken: cancellationToken);
 
             logger.LogInformation(
                 "Order created successfully. Order: {@Order}",
                 order);
 
-            isSuccess = await ClearCart();
-
-            if (isSuccess is false)
-            {
-                return OrderResults<OrderDto>.ClearCartFailed(result: result, data: order.ToDto());
-            }
+            await ClearCart(cancellationToken);
 
             var isStockAvailable = await CheckInventory(
                 orderItems: order.Items,
@@ -80,7 +77,11 @@ public class OrdersService(
                 return OrderResults<OrderDto>.StockUnavailable(order.ToDto());
             }
 
-            var paymentStatus = await MakePayment();
+            var paymentStatus = await MakePayment(
+                orderId: order.Id,
+                amount: order.TotalAmount,
+                paymentMode: request.PaymentMode,
+                cancellationToken: cancellationToken);
 
             order.UpdatePaymentState(paymentStatus);
             await orderRepository.UpdateOrder(order: order, cancellationToken: cancellationToken);
@@ -269,10 +270,10 @@ public class OrdersService(
         return order;
     }
 
-    private async Task<(bool isSuccess, ServiceResult<CartDto>? result)> FetchCart()
+    private async Task<(bool, ServiceResult<CartDto>?)> FetchCart(CancellationToken cancellationToken)
     {
         logger.LogInformation("Fetching cart details.");
-        var result = await cartHttpClient.GetCart();
+        var result = await cartHttpClient.GetCart(cancellationToken);
 
         if (result == null || result.StatusCode != HttpStatusCode.OK)
         {
@@ -288,7 +289,11 @@ public class OrdersService(
         return (true, result);
     }
 
-    private async Task<Order> CreateNewOrder(Guid userId, CartDto cartDto, CancellationToken cancellationToken)
+    private async Task<Order> CreateNewOrder(
+        Guid userId,
+        CartDto cartDto,
+        PaymentMode paymentMode,
+        CancellationToken cancellationToken)
     {
         var orderItems = new List<OrderItem>();
 
@@ -302,15 +307,18 @@ public class OrdersService(
             orderItems.Add(orderItem);
         }
 
-        var order = Order.Create(userId: userId, items: orderItems);
+        var order = Order.Create(
+            userId: userId,
+            items: orderItems,
+            paymentMode: paymentMode);
 
         return await orderRepository.CreateOrder(order: order, cancellationToken: cancellationToken);
     }
 
-    private async Task<bool> ClearCart()
+    private async Task<bool> ClearCart(CancellationToken cancellationToken)
     {
         logger.LogInformation("Start clearing cart details.");
-        var statusCode = await cartHttpClient.ClearCart();
+        var statusCode = await cartHttpClient.ClearCart(cancellationToken);
 
         if (statusCode != HttpStatusCode.NoContent)
         {
@@ -356,8 +364,48 @@ public class OrdersService(
         return true;
     }
 
-    private async Task<OrderPaymentStatus> MakePayment()
+    private async Task<OrderPaymentStatus> MakePayment(
+        Guid orderId,
+        decimal amount,
+        PaymentMode paymentMode,
+        CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Start make payment.");
+        var request = new ProcessPaymentRequest
+        {
+            OrderId = orderId,
+            Amount = amount,
+            PaymentMode = paymentMode
+        };
+
+        var result = await paymentHttpClient.ProcessPayment(
+            request: request,
+            cancellationToken: cancellationToken);
+
+        if (result == null || result.StatusCode != HttpStatusCode.OK)
+        {
+            logger.LogWarning(
+                "Failed to make payment. Result: {@Result}",
+                result);
+            return OrderPaymentStatus.Failed;
+        }
+
+        logger.LogInformation(
+            "Payment completed. Result: {@Result}",
+            result);
+
+        var paymentDto = result.Data;
+
+        if (paymentDto is null)
+        {
+            return OrderPaymentStatus.Failed;
+        }
+
+        if (paymentDto.PaymentStatus.Equals("Completed", StringComparison.OrdinalIgnoreCase))
+        {
+            return OrderPaymentStatus.Paid;
+        }
+
+        return OrderPaymentStatus.Failed;
     }
 }

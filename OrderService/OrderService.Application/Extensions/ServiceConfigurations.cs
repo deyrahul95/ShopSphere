@@ -24,6 +24,24 @@ public static class ServiceConfigurations
             HttpClientConstants.OrderPipelineName,
             ConfigureDefaultResiliencePipeline);
 
+        services.AddHttpClient<IInventoryHttpClient, InventoryHttpClient>(client =>
+        {
+            client.BaseAddress = new Uri(configuration[HttpClientConstants.InventoryBaseAddress] ?? "");
+        })
+        .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
+        .AddResilienceHandler(
+            HttpClientConstants.InventoryPipelineName,
+            ConfigureDefaultResiliencePipeline);
+
+        services.AddHttpClient<IPaymentHttpClient, PaymentHttpClient>(client =>
+        {
+            client.BaseAddress = new Uri(configuration[HttpClientConstants.PaymentBaseAddress] ?? "");
+        })
+        .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
+        .AddResilienceHandler(
+            HttpClientConstants.PaymentPipelineName,
+            ConfigureDefaultResiliencePipeline);
+
         services.AddScoped<IOrdersService, OrdersService>();
 
         return services;

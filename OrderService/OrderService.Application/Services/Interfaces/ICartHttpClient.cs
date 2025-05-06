@@ -6,6 +6,6 @@ namespace OrderService.Application.Services.Interfaces;
 
 public interface ICartHttpClient
 {
-    Task<ServiceResult<CartDto>?> GetCart();
-    Task<HttpStatusCode> ClearCart();
+    Task<ServiceResult<CartDto>?> GetCart(CancellationToken cancellationToken = default);
+    Task<HttpStatusCode> ClearCart(CancellationToken cancellationToken = default);
 }

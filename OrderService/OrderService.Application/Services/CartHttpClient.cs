@@ -11,29 +11,33 @@ public class CartHttpClient(
     HttpClient httpClient,
     ILogger<CartHttpClient> logger) : ICartHttpClient
 {
-    public async Task<ServiceResult<CartDto>?> GetCart()
+    public async Task<ServiceResult<CartDto>?> GetCart(CancellationToken cancellationToken = default)
     {
         var requestPath = $"/api/cart";
         var uri = $"{httpClient.BaseAddress}{requestPath}";
 
         logger.LogInformation("Start processing get cart request. URI: {URI}", uri);
-        var response = await httpClient.GetAsync(requestPath);
+        var response = await httpClient.GetAsync(
+            requestUri: requestPath,
+            cancellationToken: cancellationToken);
 
         logger.LogInformation(
             "Completed processing get cart request. URI: {URI}, StatusCode: {StatusCode}",
             uri,
             response.StatusCode);
 
-        return await response.Content.ReadFromJsonAsync<ServiceResult<CartDto>>();
+        return await response.Content.ReadFromJsonAsync<ServiceResult<CartDto>>(cancellationToken: cancellationToken);
     }
 
-    public async Task<HttpStatusCode> ClearCart()
+    public async Task<HttpStatusCode> ClearCart(CancellationToken cancellationToken = default)
     {
         var requestPath = $"/api/cart";
         var uri = $"{httpClient.BaseAddress}{requestPath}";
 
         logger.LogInformation("Start processing clear cart request. URI: {URI}", uri);
-        var response = await httpClient.DeleteAsync(requestPath);
+        var response = await httpClient.DeleteAsync(
+            requestUri: requestPath,
+            cancellationToken: cancellationToken);
 
         logger.LogInformation(
             "Completed processing clear cart request. URI: {URI}, StatusCode: {StatusCode}",

@@ -10,24 +10,26 @@ public class Order
     public Guid UserId { get; init; }
     public List<OrderItem> Items { get; init; }
     public decimal TotalAmount { get; init; }
+    public string PaymentMode { get; init; }
     public string OrderState { get; private set; }
     public string PaymentState { get; private set; }
     public DateTime CreatedAt { get; init; }
     public DateTime LastUpdated { get; private set; }
 
-    private Order(Guid userId, List<OrderItem> items)
+    private Order(Guid userId, List<OrderItem> items, PaymentMode paymentMode)
     {
         Id = Guid.NewGuid();
         UserId = userId;
         Items = items;
         TotalAmount = CalculateTotalAmount();
+        PaymentMode = paymentMode.ToString();
         OrderState = OrderStatus.Pending.ToString();
         PaymentState = OrderPaymentStatus.Unpaid.ToString();
         CreatedAt = DateTime.UtcNow;
         LastUpdated = DateTime.UtcNow;
     }
 
-    public static Order Create(Guid userId, List<OrderItem> items)
+    public static Order Create(Guid userId, List<OrderItem> items, PaymentMode paymentMode)
     {
         if (userId.Equals(Guid.Empty))
         {
@@ -53,7 +55,7 @@ public class Order
             );
         }
 
-        return new Order(userId: userId, items: items);
+        return new Order(userId: userId, items: items, paymentMode: paymentMode);
     }
 
     public void UpdateOrderState(OrderStatus status)

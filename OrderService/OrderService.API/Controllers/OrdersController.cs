@@ -18,6 +18,11 @@ public class OrdersController(IOrdersService orderService, ILogger<OrdersControl
         [FromBody] CreateOrderRequest request,
         CancellationToken cancellationToken = default)
     {
+        if (ModelState.IsValid is false)
+        {
+            return BadRequest(ModelState);
+        }
+
         var userId = GetLoggedInUserId();
 
         if (userId.Equals(Guid.Empty))
