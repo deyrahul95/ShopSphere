@@ -4,6 +4,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using InventoryService.Infrastructure.Extensions;
 using InventoryService.Application.Extensions;
+using InventoryService.API.Constants;
 
 namespace InventoryService.API.Extensions;
 
@@ -15,7 +16,7 @@ public static class ServiceConfigurations
         services.AddApplicationServices();
 
         services.AddOpenTelemetry()
-            .ConfigureResource(resource => resource.AddService("ProductService"))
+            .ConfigureResource(resource => resource.AddService(OpenTelemetryConstants.ServiceName))
             .WithTracing(tracing =>
             {
                 tracing
@@ -23,7 +24,7 @@ public static class ServiceConfigurations
                     .AddAspNetCoreInstrumentation()
                     .AddOtlpExporter(options => 
                     {
-                        options.Endpoint = new Uri(configuration["OTLPEndpoint"] ?? "");
+                        options.Endpoint = new Uri(configuration[OpenTelemetryConstants.OTLPEndpoint] ?? "");
                         options.Protocol = OtlpExportProtocol.HttpProtobuf;
                     });
             });
@@ -35,7 +36,7 @@ public static class ServiceConfigurations
     {
         app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-        object value = app.UseInfrastructureServices();
+        app.UseInfrastructureServices();
         
         return app;
     }

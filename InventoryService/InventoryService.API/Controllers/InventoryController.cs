@@ -20,6 +20,11 @@ public class InventoryController(
         [FromBody] CheckInventoryRequest request,
         CancellationToken cancellationToken = default)
     {
+        if (ModelState.IsValid is false)
+        {
+            return BadRequest(ModelState);
+        }
+
         logger.LogInformation(
             "Start processing check inventory request. Request: {@Request}",
             request);
