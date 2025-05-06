@@ -8,4 +8,9 @@ public interface IInventoryService
     Task<ServiceResult<CheckInventoryResponse>> CheckInventory(
         CheckInventoryRequest request,
         CancellationToken token = default);
+
+    Task<ServiceResult> UpdateInventory(
+        Guid productId,
+        UpdateInventoryRequest request,
+        CancellationToken token = default);
 }
