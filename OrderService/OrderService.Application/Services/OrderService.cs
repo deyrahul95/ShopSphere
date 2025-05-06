@@ -1,4 +1,5 @@
 using System.Net;
+using MassTransit;
 using Microsoft.Extensions.Logging;
 using OrderService.Application.DTOs;
 using OrderService.Application.Extensions;
@@ -7,6 +8,7 @@ using OrderService.Application.Results;
 using OrderService.Application.Services.Interfaces;
 using OrderService.Domain.Entities;
 using OrderService.Domain.Enums;
+using OrderService.Domain.Events;
 using OrderService.Domain.Exceptions;
 using OrderService.Domain.Repositories;
 
@@ -17,6 +19,7 @@ public class OrdersService(
     ICartHttpClient cartHttpClient,
     IInventoryHttpClient inventoryHttpClient,
     IPaymentHttpClient paymentHttpClient,
+    IPublishEndpoint publishEndpoint,
     ILogger<OrdersService> logger) : IOrdersService
 {
     public async Task<ServiceResult<OrderDto>> CreateOrder(
@@ -59,6 +62,10 @@ public class OrdersService(
                 paymentMode: request.PaymentMode,
                 cancellationToken: cancellationToken);
 
+            await publishEndpoint.Publish(message: new OrderCreated(
+                OrderId: order.Id,
+                UserId: order.UserId), cancellationToken: cancellationToken);
+
             logger.LogInformation(
                 "Order created successfully. Order: {@Order}",
                 order);
@@ -74,6 +81,13 @@ public class OrdersService(
                 order.UpdateOrderState(OrderStatus.Cancelled);
                 await orderRepository.UpdateOrder(order: order, cancellationToken: cancellationToken);
 
+                await publishEndpoint.Publish(
+                    message: new OrderCancelled(
+                        OrderId: order.Id,
+                        UserId: order.UserId,
+                        Error: "Order Items out of stock"),
+                    cancellationToken: cancellationToken);
+
                 return OrderResults<OrderDto>.StockUnavailable(order.ToDto());
             }
 
@@ -87,6 +101,10 @@ public class OrdersService(
 
             order.UpdatePaymentState(paymentStatus);
             await orderRepository.UpdateOrder(order: order, cancellationToken: cancellationToken);
+
+            await publishEndpoint.Publish(
+                message: new OrderConfirmed(OrderId: order.Id, UserId: order.UserId),
+                cancellationToken: cancellationToken);
 
             return OrderResults<OrderDto>.OrderCreated(order.ToDto());
         }

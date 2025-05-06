@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http.Resilience;
@@ -13,6 +14,18 @@ public static class ServiceConfigurations
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddMassTransit(x =>
+        {
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host("rabbitmq", "/", h =>
+                {
+                    h.Username("guest");
+                    h.Password("guest");
+                });
+            });
+        });
+
         services.AddTransient<AuthenticatedHttpClientHandler>();
 
         services.AddHttpClient<ICartHttpClient, CartHttpClient>(client =>
