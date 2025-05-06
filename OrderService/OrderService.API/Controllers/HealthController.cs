@@ -13,7 +13,7 @@ public class HealthController : ControllerBase
     [HttpGet]
     public ActionResult<ServiceResult> Health()
     {
-        var response = new ServiceResult(HttpStatusCode.OK, "Api is healthy");
+        var response = new ServiceResult(HttpStatusCode.OK, "OrderService is healthy");
 
         return Ok(response);
     }
