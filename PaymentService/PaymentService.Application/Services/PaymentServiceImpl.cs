@@ -47,6 +47,15 @@ public class PaymentServiceImpl(
                 "Start processing payment. Order Id: {OrderId}",
                 request.OrderId);
 
+            if (order.PaymentState.Equals("Paid", StringComparison.OrdinalIgnoreCase))
+            {
+                logger.LogInformation(
+                    "Order amount already paid. Order Id: {OrderId}, Payment Status: {PaymentStatus}",
+                    order.Id,
+                    order.PaymentState);
+                return PaymentResults<PaymentDto>.AmountAlreadyPaid;
+            }
+
             if (order.TotalPrice > request.Amount)
             {
                 logger.LogInformation(

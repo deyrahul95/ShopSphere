@@ -77,6 +77,8 @@ public class OrdersService(
                 return OrderResults<OrderDto>.StockUnavailable(order.ToDto());
             }
 
+            order.UpdateOrderState(OrderStatus.Confirmed);
+
             var paymentStatus = await MakePayment(
                 orderId: order.Id,
                 amount: order.TotalAmount,

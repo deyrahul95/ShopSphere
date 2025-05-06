@@ -17,8 +17,9 @@ public class PaymentHttpClient(HttpClient httpClient, ILogger<PaymentHttpClient>
         var uri = $"{httpClient.BaseAddress}{requestPath}";
 
         logger.LogInformation("Start processing payment request. URI: {URI}", uri);
-        var response = await httpClient.GetAsync(
+        var response = await httpClient.PostAsJsonAsync(
             requestUri: requestPath,
+            value: request,
             cancellationToken: cancellationToken);
 
         logger.LogInformation(
@@ -27,6 +28,5 @@ public class PaymentHttpClient(HttpClient httpClient, ILogger<PaymentHttpClient>
             response.StatusCode);
 
         return await response.Content.ReadFromJsonAsync<ServiceResult<PaymentDto>>(cancellationToken: cancellationToken);
-
     }
 }

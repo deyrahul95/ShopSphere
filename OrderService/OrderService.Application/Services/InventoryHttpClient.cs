@@ -18,8 +18,9 @@ public class InventoryHttpClient(
         var uri = $"{httpClient.BaseAddress}{requestPath}";
 
         logger.LogInformation("Start processing check inventory request. URI: {URI}", uri);
-        var response = await httpClient.GetAsync(
+        var response = await httpClient.PostAsJsonAsync(
             requestUri: requestPath,
+            value: request,
             cancellationToken: cancellationToken);
 
         logger.LogInformation(
@@ -27,6 +28,6 @@ public class InventoryHttpClient(
             uri,
             response.StatusCode);
 
-        return await response.Content.ReadFromJsonAsync<ServiceResult<CheckInventoryResponse>>();
+        return await response.Content.ReadFromJsonAsync<ServiceResult<CheckInventoryResponse>>(cancellationToken: cancellationToken);
     }
 }

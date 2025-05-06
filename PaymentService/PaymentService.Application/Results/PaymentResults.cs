@@ -54,4 +54,8 @@ public class PaymentResults<T> where T : class
     public static ServiceResult<T> InsufficientAmount => new(
         statusCode: HttpStatusCode.BadRequest,
         message: "Requested amount is less than order total price.");
+
+    public static ServiceResult<T> AmountAlreadyPaid => new(
+        statusCode: HttpStatusCode.Conflict,
+        message: "Order amount already paid. No need to do payment again.");
 }
