@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 services:
   user_service:
@@ -79,6 +79,31 @@ services:
     depends_on:
       - seq
 
+  notification_service:
+    build:
+      context: ./NotificationService
+      dockerfile: Dockerfile
+    image: notification-service:latest
+    container_name: notification-service-1
+    depends_on:
+      - rabbitmq
+      - seq
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - app_network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - app_network
+
   seq:
     image: datalust/seq:latest
     container_name: seq-1
@@ -86,16 +111,16 @@ services:
       - "5431:5431"
       - "8081:80"
     environment:
-      - ACCEPT_EULA=Y
+      ACCEPT_EULA: "Y"
     volumes:
       - seq_data:/data
     networks:
       - app_network
-
 
 networks:
   app_network:
     driver: bridge
 
 volumes:
+  rabbitmq_data:
   seq_data:

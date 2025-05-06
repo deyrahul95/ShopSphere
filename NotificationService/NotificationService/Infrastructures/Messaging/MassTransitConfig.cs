@@ -38,7 +38,7 @@ public static class MassTransitConfig
 
             x.UsingRabbitMq((ctx, cfg) =>
             {
-                cfg.Host(MassTransitConstants.RabbitMqHost, h =>
+                cfg.Host(MassTransitConstants.RabbitMqHost, "/", h =>
                 {
                     h.Username(MassTransitConstants.RabbitMqDefaultUser);
                     h.Password(MassTransitConstants.RabbitMqDefaultPassword);
