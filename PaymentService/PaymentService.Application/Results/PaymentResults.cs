@@ -38,7 +38,20 @@ public class PaymentResults<T> where T : class
         message: "Payment processed successfully.",
         data: data);
 
-    public static ServiceResult<T> PaymentFailed(string message) => new(
+    public static ServiceResult<T> PaymentFailed(string message, T data) => new(
         statusCode: HttpStatusCode.BadRequest,
-        message: message);
+        message: message,
+        data: data);
+
+    public static ServiceResult<T> HttpRequestFailed(ServiceResult? result) => new(
+        statusCode: result?.StatusCode ?? HttpStatusCode.BadRequest,
+        message: result?.Message ?? "Http request failed. Please re-try after sometime.");
+
+    public static ServiceResult<T> OrderNotFound(Guid id) => new(
+        statusCode: HttpStatusCode.NotFound,
+        message: $"Order with id:{id} not found in our database.");
+
+    public static ServiceResult<T> InsufficientAmount => new(
+        statusCode: HttpStatusCode.BadRequest,
+        message: "Requested amount is less than order total price.");
 }
