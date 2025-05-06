@@ -5,10 +5,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using PaymentService.Domain.Providers;
 using PaymentService.Domain.Repositories;
 using PaymentService.Infrastructure.Configs;
 using PaymentService.Infrastructure.Constants;
 using PaymentService.Infrastructure.DB;
+using PaymentService.Infrastructure.Providers;
 using PaymentService.Infrastructure.Repositories;
 
 namespace PaymentService.Infrastructure.Extensions;
@@ -41,6 +43,11 @@ public static class ServiceConfigurations
         services.AddSingleton<InMemoryDB>();
         services.AddSingleton<IPaymentRepository, InMemoryPaymentRepository>();
 
+        services.AddScoped<UPIPaymentProvider>();
+        services.AddScoped<CreditCardPaymentProvider>();
+        services.AddScoped<DebitCardPaymentProvider>();
+        services.AddScoped<IPaymentProviderFactory, PaymentProviderFactory>();
+
         return services;
     }
 
@@ -51,5 +58,5 @@ public static class ServiceConfigurations
 
         return app;
     }
-    
+
 }

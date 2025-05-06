@@ -5,13 +5,16 @@ using PaymentService.Application.Models;
 using PaymentService.Application.Results;
 using PaymentService.Application.Services.Interfaces;
 using PaymentService.Domain.Entities;
+using PaymentService.Domain.Enums;
 using PaymentService.Domain.Exceptions;
+using PaymentService.Domain.Providers;
 using PaymentService.Domain.Repositories;
 
 namespace PaymentService.Application.Services;
 
 public class PaymentServiceImpl(
     IPaymentRepository paymentRepository,
+    IPaymentProviderFactory paymentProviderFactory,
     ILogger<PaymentServiceImpl> logger) : IPaymentService
 {
     public async Task<ServiceResult<PaymentDto>> ProcessPayment(
@@ -21,13 +24,30 @@ public class PaymentServiceImpl(
     {
         try
         {
-            //TODO: Fetch order data
+            //TODO: Fetch order data 
 
-            var paymentDto = await CreateNewPayment(
+            logger.LogInformation(
+                "Start processing payment. Order Id: {OrderId}",
+                request.OrderId);
+
+            var payment = Payment.Create(
+                orderId: request.OrderId,
                 userId: userId,
-                request: request,
+                amount: request.Amount,
+                paymentMode: request.PaymentMode);
+
+            var paymentStatus = await MakePayment(
+                paymentMode: request.PaymentMode,
+                amount: payment.Amount,
                 cancellationToken: cancellationToken);
-            return PaymentResults<PaymentDto>.PaymentProcessed(paymentDto);
+
+            payment.UpdateStatus(paymentStatus);
+            var updatedPayment = await paymentRepository.Create(payment, cancellationToken);
+
+            logger.LogInformation(
+                "Payment processed successfully. Payment: {@Payment}",
+                updatedPayment);
+            return PaymentResults<PaymentDto>.PaymentProcessed(updatedPayment.ToDto());
         }
         catch (PaymentValidationException ex)
         {
@@ -80,26 +100,12 @@ public class PaymentServiceImpl(
         }
     }
 
-    private async Task<PaymentDto> CreateNewPayment(
-        Guid userId,
-        ProcessPaymentRequest request,
-        CancellationToken cancellationToken)
+    private async Task<PaymentStatus> MakePayment(PaymentMode paymentMode, decimal amount, CancellationToken cancellationToken)
     {
-        logger.LogInformation(
-            "Start processing payment. Order Id: {OrderId}",
-            request.OrderId);
+        var paymentProvider = paymentProviderFactory.GetPaymentProvider(paymentMode);
 
-        var payment = Payment.Create(
-            orderId: request.OrderId,
-            userId: userId,
-            amount: request.Amount,
-            paymentMode: request.PaymentMode);
-
-        var newPayment = await paymentRepository.Create(payment: payment, cancellationToken: cancellationToken);
-        logger.LogInformation(
-            "Payment processed successfully. Payment: {@Payment}",
-            newPayment);
-        return newPayment.ToDto();
+        var status = await paymentProvider.ProcessTransaction(amount: amount, cancellationToken: cancellationToken);
+        return status;
     }
 
     private async Task<PaymentDto?> GetPaymentByOrderId(
@@ -114,7 +120,7 @@ public class PaymentServiceImpl(
         {
             logger.LogWarning("Payment details not found. Order Id: {OrderId}", orderId);
             return null;
-            }
+        }
 
         logger.LogInformation("Payment fetch successfully. Payment: {@Payment}", payment);
         return payment.ToDto();
