@@ -38,7 +38,6 @@ services:
     networks:
       - app_network
     depends_on:
-      - product_service
       - seq
 
   order_service:
@@ -52,7 +51,6 @@ services:
     networks:
       - app_network
     depends_on:
-      - cart_service
       - seq
 
   inventory_service:
@@ -63,6 +61,19 @@ services:
     container_name: inventory-service-1
     ports:
       - "5160:8080"
+    networks:
+      - app_network
+    depends_on:
+      - seq
+
+  payment_service:
+    build:
+      context: ./PaymentService
+      dockerfile: Dockerfile
+    image: payment-service:latest
+    container_name: payment-service-1
+    ports:
+      - "5170:8080"
     networks:
       - app_network
     depends_on:
