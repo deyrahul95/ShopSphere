@@ -9,7 +9,7 @@ public class PaymentInitiatedConsumer(INotificationSender sender) : IConsumer<Pa
     public Task Consume(ConsumeContext<PaymentInitiatedEvent> context)
     {
         return sender.SendAsync(
-             "PaymentInitiated",
-             $"Payment initiated for order {context.Message.OrderId}. Amount: {context.Message.Amount}");
+            "PaymentInitiated",
+            $"Payment initiated for order {context.Message.OrderId} and user {context.Message.UserId}.");
     }
 }
