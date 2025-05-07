@@ -14,7 +14,7 @@ namespace OrderService.API.Controllers;
 public class OrdersController(IOrdersService orderService, ILogger<OrdersController> logger) : ControllerBase
 {
     [HttpPost]
-    public async Task<ActionResult<ServiceResult<OrderDto>>> Create(
+    public async Task<ActionResult<ServiceResult>> Create(
         [FromBody] CreateOrderRequest request,
         CancellationToken cancellationToken = default)
     {
@@ -43,8 +43,9 @@ public class OrdersController(IOrdersService orderService, ILogger<OrdersControl
         logger.LogInformation(
             "Completed processing create order request. User Id: {UserId}, Order Id: {OrderId}, Status Code: {StatusCode}",
             userId,
-            response.Data?.Id.ToString() ?? "N/A",
+            response.Data?.OrderId.ToString() ?? "N/A",
             response.StatusCode);
+
         return StatusCode((int)response.StatusCode, response);
     }
 
