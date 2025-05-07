@@ -10,8 +10,8 @@ public class InventoryHttpClient(
     HttpClient httpClient,
     ILogger<InventoryHttpClient> logger) : IInventoryHttpClient
 {
-    public async Task<ServiceResult<CheckInventoryResponse>?> CheckInventory(
-        CheckInventoryRequest request,
+    public async Task<ServiceResult<InventoryResponse>?> CheckInventory(
+        InventoryRequest request,
         CancellationToken cancellationToken = default)
     {
         var requestPath = $"/api/inventory/check";
@@ -28,6 +28,6 @@ public class InventoryHttpClient(
             uri,
             response.StatusCode);
 
-        return await response.Content.ReadFromJsonAsync<ServiceResult<CheckInventoryResponse>>(cancellationToken: cancellationToken);
+        return await response.Content.ReadFromJsonAsync<ServiceResult<InventoryResponse>>(cancellationToken: cancellationToken);
     }
 }

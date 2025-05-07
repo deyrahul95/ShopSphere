@@ -6,7 +6,7 @@ namespace OrderService.Application.Services.Interfaces;
 
 public interface IOrdersService
 {
-    Task<ServiceResult<OrderDto>> CreateOrder(
+    Task<ServiceResult<OrderAcceptedResponse>> CreateOrder(
         Guid userId,
         CreateOrderRequest request,
         CancellationToken cancellationToken = default);

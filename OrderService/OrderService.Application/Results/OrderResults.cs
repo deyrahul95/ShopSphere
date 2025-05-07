@@ -31,9 +31,9 @@ public class OrderResults<T> where T : class
         statusCode: HttpStatusCode.NotFound,
         message: $"Cart with id:{id} has no items. Please add some items and try again");
 
-    public static ServiceResult<T> OrderCreated(T data) => new(
-        statusCode: HttpStatusCode.Created,
-        message: "Order created successfully.",
+    public static ServiceResult<T> OrderAccepted(T data) => new(
+        statusCode: HttpStatusCode.Accepted,
+        message: "Order accepted. Please wait for some time while we are preparing your order.",
         data: data);
 
     public static ServiceResult<T> OrderFetched(T data) => new(
@@ -49,9 +49,4 @@ public class OrderResults<T> where T : class
         statusCode: HttpStatusCode.BadRequest,
         message: "Validation Failed, Please check errors and try again.",
         errors: errors);
-
-    public static ServiceResult<T> StockUnavailable(T data) => new(
-        statusCode: HttpStatusCode.BadRequest,
-        message: "Order canceled due to item is out of stock.",
-        data: data);
 }
