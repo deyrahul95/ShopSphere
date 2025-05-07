@@ -51,6 +51,7 @@ services:
     networks:
       - app_network
     depends_on:
+      - rabbitmq
       - seq
 
   inventory_service:
@@ -81,8 +82,8 @@ services:
 
   notification_service:
     build:
-      context: ./NotificationService
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./NotificationService/Dockerfile
     image: notification-service:latest
     container_name: notification-service-1
     depends_on:
