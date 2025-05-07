@@ -444,7 +444,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"cartId\": \"{{cartId}}\"\r\n}",
+							"raw": "{\r\n\t\"cartId\": \"{{cartId}}\",\r\n\t\"paymentMode\": \"CreditCard\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
