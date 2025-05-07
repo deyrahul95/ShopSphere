@@ -1,4 +1,5 @@
 using System.Net;
+using MassTransit;
 using Microsoft.Extensions.Logging;
 using PaymentService.Application.DTOs;
 using PaymentService.Application.Extensions;
@@ -11,6 +12,7 @@ using PaymentService.Domain.Enums;
 using PaymentService.Domain.Exceptions;
 using PaymentService.Domain.Providers;
 using PaymentService.Domain.Repositories;
+using Shared.Contracts.Events.Payment;
 
 namespace PaymentService.Application.Services;
 
@@ -19,6 +21,7 @@ public class PaymentServiceImpl(
     IPaymentProviderFactory paymentProviderFactory,
     RetryHandler retryHandler,
     IOrderHttpClient orderHttpClient,
+    IPublishEndpoint publishEndpoint,
     ILogger<PaymentServiceImpl> logger) : IPaymentService
 {
     public async Task<ServiceResult<PaymentDto>> ProcessPayment(
@@ -61,6 +64,12 @@ public class PaymentServiceImpl(
                 logger.LogInformation(
                     "Order total price is getter than request amount. Order Id: {OrderId}",
                     request.OrderId);
+
+                await publishEndpoint.Publish(new PaymentFailedEvent(
+                    order.Id,
+                    userId,
+                    $"Requested amount ₹{request.Amount:N0} is less than the order total price ₹{order.TotalPrice:N0}."), cancellationToken);
+
                 return PaymentResults<PaymentDto>.InsufficientAmount;
             }
 
@@ -81,12 +90,16 @@ public class PaymentServiceImpl(
                     "Payment transaction failed. Order Id: {OrderId}, Error: {Error}",
                     request.OrderId,
                     message);
+
+                await publishEndpoint.Publish(new PaymentFailedEvent(order.Id, userId, message), cancellationToken);
                 return PaymentResults<PaymentDto>.PaymentFailed(message, payment.ToDto());
             }
 
             logger.LogInformation(
                 "Payment processed successfully. Payment: {@Payment}",
                 payment);
+
+            await publishEndpoint.Publish(new PaymentCompletedEvent(order.Id, userId), cancellationToken);
             return PaymentResults<PaymentDto>.PaymentProcessed(payment.ToDto());
         }
         catch (PaymentValidationException ex)

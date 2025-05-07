@@ -8,9 +8,9 @@ using OrderService.Application.Results;
 using OrderService.Application.Services.Interfaces;
 using OrderService.Domain.Entities;
 using OrderService.Domain.Enums;
-using OrderService.Domain.Events;
 using OrderService.Domain.Exceptions;
 using OrderService.Domain.Repositories;
+using Shared.Contracts.Events.Order;
 
 namespace OrderService.Application.Services;
 
@@ -62,7 +62,7 @@ public class OrdersService(
                 paymentMode: request.PaymentMode,
                 cancellationToken: cancellationToken);
 
-            await publishEndpoint.Publish(message: new OrderCreated(
+            await publishEndpoint.Publish(message: new OrderCreatedEvent(
                 OrderId: order.Id,
                 UserId: order.UserId), cancellationToken: cancellationToken);
 
@@ -82,7 +82,7 @@ public class OrdersService(
                 await orderRepository.UpdateOrder(order: order, cancellationToken: cancellationToken);
 
                 await publishEndpoint.Publish(
-                    message: new OrderCancelled(
+                    message: new OrderCancelledEvent(
                         OrderId: order.Id,
                         UserId: order.UserId,
                         Error: "Order Items out of stock"),
@@ -103,7 +103,7 @@ public class OrdersService(
             await orderRepository.UpdateOrder(order: order, cancellationToken: cancellationToken);
 
             await publishEndpoint.Publish(
-                message: new OrderConfirmed(OrderId: order.Id, UserId: order.UserId),
+                message: new OrderConfirmedEvent(OrderId: order.Id, UserId: order.UserId),
                 cancellationToken: cancellationToken);
 
             return OrderResults<OrderDto>.OrderCreated(order.ToDto());

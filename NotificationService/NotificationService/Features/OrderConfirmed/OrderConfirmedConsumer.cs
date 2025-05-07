@@ -1,11 +1,12 @@
 using MassTransit;
 using NotificationService.Infrastructures.Notifications;
+using Shared.Contracts.Events.Order;
 
 namespace NotificationService.Features.OrderConfirmed;
 
-public class OrderConfirmedConsumer(INotificationSender sender) : IConsumer<OrderConfirmed>
+public class OrderConfirmedConsumer(INotificationSender sender) : IConsumer<OrderConfirmedEvent>
 {
-    public Task Consume(ConsumeContext<OrderConfirmed> context)
+    public Task Consume(ConsumeContext<OrderConfirmedEvent> context)
     {
         return sender.SendAsync(
             "OrderConfirmed",

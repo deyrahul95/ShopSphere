@@ -1,11 +1,12 @@
 using MassTransit;
 using NotificationService.Infrastructures.Notifications;
+using Shared.Contracts.Events.Payment;
 
 namespace NotificationService.Features.PaymentFailed;
 
-public class PaymentFailedConsumer(INotificationSender sender) : IConsumer<PaymentFailed>
+public class PaymentFailedConsumer(INotificationSender sender) : IConsumer<PaymentFailedEvent>
 {
-    public Task Consume(ConsumeContext<PaymentFailed> context)
+    public Task Consume(ConsumeContext<PaymentFailedEvent> context)
     {
         return sender.SendAsync(
             "PaymentFailed",
