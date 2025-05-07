@@ -11,6 +11,7 @@ COPY PaymentService/PaymentService.API/PaymentService.API.csproj ./PaymentServic
 COPY PaymentService/PaymentService.Application/PaymentService.Application.csproj ./PaymentService/PaymentService.Application/
 COPY PaymentService/PaymentService.Domain/PaymentService.Domain.csproj ./PaymentService/PaymentService.Domain/
 COPY PaymentService/PaymentService.Infrastructure/PaymentService.Infrastructure.csproj ./PaymentService/PaymentService.Infrastructure/
+COPY Shared/Shared.Contracts/Shared.Contracts.csproj ./Shared/Shared.Contracts/
 
 WORKDIR /src/PaymentService
 RUN dotnet restore
@@ -19,8 +20,8 @@ WORKDIR /src
 COPY PaymentService/ ./PaymentService/
 COPY Shared/ ./Shared/
 
-WORKDIR /src/PaymentService.API
-RUN dotnet publish PaymentService.API.csproj -c Release -o /app/publish --no-restore
+WORKDIR /src/PaymentService/PaymentService.API
+RUN dotnet publish PaymentService.API.csproj -c Release -o /app/publish
 
 
 FROM base AS final
