@@ -1,11 +1,12 @@
 using MassTransit;
 using NotificationService.Infrastructures.Notifications;
+using Shared.Contracts.Events.Order;
 
 namespace NotificationService.Features.OrderCancelled;
 
-public class OrderCancelledConsumer(INotificationSender sender) : IConsumer<OrderCancelled>
+public class OrderCancelledConsumer(INotificationSender sender) : IConsumer<OrderCancelledEvent>
 {
-    public Task Consume(ConsumeContext<OrderCancelled> context)
+    public Task Consume(ConsumeContext<OrderCancelledEvent> context)
     {
         return sender.SendAsync(
             "OrderCancelled",

@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService", "NotificationService\NotificationService.csproj", "{C0CBA6C2-3B50-4453-BFA1-9BC9BCD6C878}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Contracts", "..\Shared\Shared.Contracts\Shared.Contracts.csproj", "{68F01064-F221-491E-B8F5-65D23C5041E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{C0CBA6C2-3B50-4453-BFA1-9BC9BCD6C878}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0CBA6C2-3B50-4453-BFA1-9BC9BCD6C878}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0CBA6C2-3B50-4453-BFA1-9BC9BCD6C878}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68F01064-F221-491E-B8F5-65D23C5041E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68F01064-F221-491E-B8F5-65D23C5041E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68F01064-F221-491E-B8F5-65D23C5041E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68F01064-F221-491E-B8F5-65D23C5041E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

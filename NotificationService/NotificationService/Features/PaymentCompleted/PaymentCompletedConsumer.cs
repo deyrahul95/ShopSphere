@@ -1,11 +1,12 @@
 using MassTransit;
 using NotificationService.Infrastructures.Notifications;
+using Shared.Contracts.Events.Payment;
 
 namespace NotificationService.Features.PaymentCompleted;
 
-public class PaymentCompletedConsumer(INotificationSender sender) : IConsumer<PaymentCompleted>
+public class PaymentCompletedConsumer(INotificationSender sender) : IConsumer<PaymentCompletedEvent>
 {
-    public Task Consume(ConsumeContext<PaymentCompleted> context)
+    public Task Consume(ConsumeContext<PaymentCompletedEvent> context)
     {
         return sender.SendAsync(
             "PaymentCompleted",
