@@ -16,12 +16,12 @@ public class Program
             .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
             .Enrich.FromLogContext()
             .WriteTo.Console()
-            .WriteTo.Seq("http://seq:5431")
+            .WriteTo.Seq("http://seq:5341")
             .CreateLogger();
 
         try
         {
-            Log.Information("Starting up Notification Service...");
+            Log.Information("[NotificationService] Starting up Notification Service...");
 
             var host = Host.CreateDefaultBuilder(args)
                 .UseSerilog()
@@ -36,7 +36,7 @@ public class Program
         }
         catch (Exception ex)
         {
-            Log.Fatal(ex, "Application start-up failed");
+            Log.Fatal(ex, "[NotificationService] Application start-up failed");
         }
         finally
         {
