@@ -5,13 +5,20 @@ EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY PaymentService.sln ./
-COPY PaymentService.API/PaymentService.API.csproj ./PaymentService.API/
-COPY PaymentService.Application/PaymentService.Application.csproj ./PaymentService.Application/
-COPY PaymentService.Domain/PaymentService.Domain.csproj ./PaymentService.Domain/
-COPY PaymentService.Infrastructure/PaymentService.Infrastructure.csproj ./PaymentService.Infrastructure/
+
+COPY PaymentService/PaymentService.sln ./PaymentService/
+COPY PaymentService/PaymentService.API/PaymentService.API.csproj ./PaymentService/PaymentService.API/
+COPY PaymentService/PaymentService.Application/PaymentService.Application.csproj ./PaymentService/PaymentService.Application/
+COPY PaymentService/PaymentService.Domain/PaymentService.Domain.csproj ./PaymentService/PaymentService.Domain/
+COPY PaymentService/PaymentService.Infrastructure/PaymentService.Infrastructure.csproj ./PaymentService/PaymentService.Infrastructure/
+
+WORKDIR /src/PaymentService
 RUN dotnet restore
-COPY . .
+
+WORKDIR /src
+COPY PaymentService/ ./PaymentService/
+COPY Shared/ ./Shared/
+
 WORKDIR /src/PaymentService.API
 RUN dotnet publish PaymentService.API.csproj -c Release -o /app/publish --no-restore
 
