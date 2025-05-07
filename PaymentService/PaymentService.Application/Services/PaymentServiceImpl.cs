@@ -68,7 +68,7 @@ public class PaymentServiceImpl(
                 await publishEndpoint.Publish(new PaymentFailedEvent(
                     order.Id,
                     userId,
-                    $"Requested amount {request.Amount} is less than the order total price {order.TotalPrice}."), cancellationToken);
+                    $"Requested amount ₹{request.Amount:N0} is less than the order total price ₹{order.TotalPrice:N0}."), cancellationToken);
 
                 return PaymentResults<PaymentDto>.InsufficientAmount;
             }
