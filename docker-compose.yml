@@ -69,8 +69,8 @@ services:
 
   payment_service:
     build:
-      context: ./PaymentService
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./PaymentService/Dockerfile
     image: payment-service:latest
     container_name: payment-service-1
     ports:
