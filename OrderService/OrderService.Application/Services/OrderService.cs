@@ -175,7 +175,7 @@ public class OrdersService(
                 OrderStatus: order.OrderState,
                 OrderPaymentStatus: order.PaymentState);
 
-            return OrderResults<OrderStatusResponse>.OrderFetched(orderStatusResponse);
+            return OrderResults<OrderStatusResponse>.OrderStatusFetched(orderStatusResponse);
         }
         catch (Exception ex)
         {

@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Net;
 using System.Threading.Channels;
 using MassTransit;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OrderService.Application.Models;
@@ -11,10 +12,9 @@ using Shared.Contracts.Events.Order;
 namespace OrderService.Application.Services;
 
 public class InventoryCheckService(
-    IInventoryHttpClient inventoryHttpClient,
     ILogger<InventoryCheckService> logger,
     Channel<InventoryCheckJob> channel,
-    IPublishEndpoint publishEndpoint,
+    IServiceScopeFactory scopeFactory,
     ConcurrentDictionary<Guid, InventoryCheckStatus> inventoryStatusDictionary) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -24,7 +24,15 @@ public class InventoryCheckService(
             try
             {
                 inventoryStatusDictionary[job.OrderId] = InventoryCheckStatus.Processing;
-                await ProcessJobAsync(job);
+
+                using var scope = scopeFactory.CreateScope();
+                var inventoryHttpClient = scope.ServiceProvider.GetRequiredService<IInventoryHttpClient>();
+                var publishEndpoint = scope.ServiceProvider.GetRequiredService<IPublishEndpoint>();
+
+                await ProcessJobAsync(
+                    job: job,
+                    inventoryHttpClient: inventoryHttpClient,
+                    publishEndpoint: publishEndpoint);
             }
             catch (Exception ex)
             {
@@ -37,7 +45,10 @@ public class InventoryCheckService(
         }
     }
 
-    private async Task ProcessJobAsync(InventoryCheckJob job)
+    private async Task ProcessJobAsync(
+        InventoryCheckJob job,
+        IInventoryHttpClient inventoryHttpClient,
+        IPublishEndpoint publishEndpoint)
     {
         foreach (var request in job.InventoryRequests)
         {

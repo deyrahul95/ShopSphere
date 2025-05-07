@@ -41,6 +41,11 @@ public class OrderResults<T> where T : class
         message: "Order fetched successfully.",
         data: data);
 
+    public static ServiceResult<T> OrderStatusFetched(T data) => new(
+        statusCode: HttpStatusCode.OK,
+        message: "Order status fetched successfully.",
+        data: data);
+
     public static ServiceResult<T> OrderNotFound(Guid id) => new(
         statusCode: HttpStatusCode.NotFound,
         message: $"Order with id:{id} not found in our database.");
