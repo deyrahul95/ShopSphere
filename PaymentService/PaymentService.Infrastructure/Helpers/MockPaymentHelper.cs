@@ -16,22 +16,22 @@ public static class MockPaymentHelper
     {
         var nextValue = _random.NextDouble();
 
-        if (nextValue < 0.2)
+        if (nextValue < 0.05)
         {
             throw new PaymentException("Bank server busy. Please try again later.");
         }
 
-        if (nextValue < 0.35)
+        if (nextValue < 0.1)
         {
             throw new PaymentException("Insufficient balance.");
         }
 
-        if ((mode == PaymentMode.CreditCard || mode == PaymentMode.DebitCard) && nextValue < 0.5)
+        if ((mode == PaymentMode.CreditCard || mode == PaymentMode.DebitCard) && nextValue < 0.15)
         {
             throw new PaymentException("Invalid card details.");
         }
 
-        if (nextValue < 0.65)
+        if (nextValue < 0.2)
         {
             throw new TimeoutException("Payment gateway timed out.");
         }
