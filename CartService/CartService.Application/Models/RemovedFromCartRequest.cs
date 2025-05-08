@@ -1,13 +1,17 @@
-using System.ComponentModel.DataAnnotations;
+using FluentValidation;
 
 namespace CartService.Application.Models;
 
-public class RemovedFromCartRequest
+public record RemovedFromCartRequest(Guid ProductId);
+
+public class RemovedFromCartValidator : AbstractValidator<RemovedFromCartRequest>
 {
-    [Required]
-    public Guid ProductId { get; set; }
-
-    // [Range(ValidationConstants.MinQuantityPerItemInCart, DomainConstants.MaxQuantityPerItemInCart)]
-    // public int Quantity { get; set; } = ValidationConstants.MinQuantityPerItemInCart;
-
+    public RemovedFromCartValidator()
+    {
+        RuleFor(x => x.ProductId)
+            .NotEmpty()
+            .WithMessage("Product id is required")
+            .NotEqual(Guid.Empty)
+            .WithMessage("Product id must be a valid guid");
+    }
 }

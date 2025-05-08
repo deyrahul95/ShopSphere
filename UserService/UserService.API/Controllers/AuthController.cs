@@ -13,8 +13,8 @@ public class AuthController(IAuthService authService, ILogger<AuthController> lo
 {
     [HttpPost]
     [Route("login")]
-    public async Task<ActionResult<ServiceResult<LoginResponseModel>>> Login(
-        [FromBody] LoginRequestModel request,
+    public async Task<ActionResult<ServiceResult<LoginResponse>>> Login(
+        [FromBody] LoginRequest request,
         CancellationToken cancellationToken = default)
     {
         logger.LogInformation(

@@ -13,8 +13,8 @@ public class AuthService(
     ITokenProvider tokenProvider,
     ILogger<AuthService> logger) : IAuthService
 {
-    public async Task<ServiceResult<LoginResponseModel>> Login(
-        LoginRequestModel request,
+    public async Task<ServiceResult<LoginResponse>> Login(
+        LoginRequest request,
         CancellationToken cancellationToken = default)
     {
         try
@@ -27,23 +27,23 @@ public class AuthService(
             if (user is null)
             {
                 logger.LogInformation("User not found. Username: {username}", request.Username);
-                return AuthResults<LoginResponseModel>.InvalidCredentials;
+                return AuthResults<LoginResponse>.InvalidCredentials;
             }
 
             if (IsValidPassword(user, request.Password) is false)
             {
                 logger.LogInformation("Invalid password. Username: {username}", request.Username);
-                return AuthResults<LoginResponseModel>.InvalidCredentials;
+                return AuthResults<LoginResponse>.InvalidCredentials;
             }
 
             var token = tokenProvider.GenerateAccessToken(user);
 
-            return AuthResults<LoginResponseModel>.LoggedIn(data: new LoginResponseModel(Token: token));
+            return AuthResults<LoginResponse>.LoggedIn(data: new LoginResponse(Token: token));
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to login. Error: {err}", ex.Message);
-            return AuthResults<LoginResponseModel>.InternalServerError;
+            return AuthResults<LoginResponse>.InternalServerError;
         }
     }
 
