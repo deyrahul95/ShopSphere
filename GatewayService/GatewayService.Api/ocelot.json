@@ -1,6 +1,20 @@
 {
     "Routes": [
         {
+            "UpstreamPathTemplate": "/api/users/health",
+            "UpstreamHttpMethod": [
+                "GET"
+            ],
+            "DownstreamPathTemplate": "/api/health",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "user_service",
+                    "Port": 8080
+                }
+            ]
+        },
+        {
             "UpstreamPathTemplate": "/api/users/{everything}",
             "UpstreamHttpMethod": [
                 "GET"
@@ -43,6 +57,20 @@
             }
         },
         {
+            "UpstreamPathTemplate": "/api/products/health",
+            "UpstreamHttpMethod": [
+                "GET"
+            ],
+            "DownstreamPathTemplate": "/api/health",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "product_service",
+                    "Port": 8080
+                }
+            ]
+        },
+        {
             "UpstreamPathTemplate": "/api/products/{everything}",
             "UpstreamHttpMethod": [
                 "GET"
@@ -68,6 +96,20 @@
             }
         },
         {
+            "UpstreamPathTemplate": "/api/cart/health",
+            "UpstreamHttpMethod": [
+                "GET"
+            ],
+            "DownstreamPathTemplate": "/api/health",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "cart_service",
+                    "Port": 8080
+                }
+            ]
+        },
+        {
             "UpstreamPathTemplate": "/api/cart/{everything}",
             "UpstreamHttpMethod": [
                 "GET",
@@ -89,6 +131,20 @@
                 "PeriodTimespan": 10,
                 "Limit": 5
             }
+        },
+        {
+            "UpstreamPathTemplate": "/api/orders/health",
+            "UpstreamHttpMethod": [
+                "GET"
+            ],
+            "DownstreamPathTemplate": "/api/health",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "order_service",
+                    "Port": 8080
+                }
+            ]
         },
         {
             "UpstreamPathTemplate": "/api/orders/{everything}",
@@ -113,6 +169,20 @@
             }
         },
         {
+            "UpstreamPathTemplate": "/api/inventory/health",
+            "UpstreamHttpMethod": [
+                "GET"
+            ],
+            "DownstreamPathTemplate": "/api/health",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "inventory_service",
+                    "Port": 8080
+                }
+            ]
+        },
+        {
             "UpstreamPathTemplate": "/api/inventory/{everything}",
             "UpstreamHttpMethod": [
                 "POST",
@@ -133,6 +203,20 @@
                 "PeriodTimespan": 10,
                 "Limit": 5
             }
+        },
+        {
+            "UpstreamPathTemplate": "/api/payment/health",
+            "UpstreamHttpMethod": [
+                "GET"
+            ],
+            "DownstreamPathTemplate": "/api/health",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "payment_service",
+                    "Port": 8080
+                }
+            ]
         },
         {
             "UpstreamPathTemplate": "/api/payment/{everything}",
