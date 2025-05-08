@@ -1,0 +1,138 @@
+{
+    "Routes": [
+        {
+            "UpstreamPathTemplate": "/api/users/{everything}",
+            "UpstreamHttpMethod": [
+                "GET",
+                "POST"
+            ],
+            "DownstreamPathTemplate": "/api/users/{everything}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "user_service",
+                    "Port": 8080
+                }
+            ],
+            "ServiceName": "UserService",
+            "LoadBalancerOptions": {
+                "Type": "RoundRobin"
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/products/{everything}",
+            "UpstreamHttpMethod": [
+                "GET"
+            ],
+            "DownstreamPathTemplate": "/api/products/{everything}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "product_service",
+                    "Port": 8080
+                }
+            ],
+            "ServiceName": "ProductService",
+            "LoadBalancerOptions": {
+                "Type": "RoundRobin"
+            },
+            "FileCacheOptions": {
+                "TtlSeconds": 10,
+                "Region": "Products"
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/cart/{everything}",
+            "UpstreamHttpMethod": [
+                "GET",
+                "POST",
+                "DELETE"
+            ],
+            "DownstreamPathTemplate": "/api/cart/{everything}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "cart_service",
+                    "Port": 8080
+                }
+            ],
+            "ServiceName": "CartService",
+            "LoadBalancerOptions": {
+                "Type": "RoundRobin"
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/orders/{everything}",
+            "UpstreamHttpMethod": [
+                "GET",
+                "POST"
+            ],
+            "DownstreamPathTemplate": "/api/orders/{everything}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "order_service",
+                    "Port": 8080
+                }
+            ],
+            "ServiceName": "OrderService",
+            "LoadBalancerOptions": {
+                "Type": "RoundRobin"
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/inventory/{everything}",
+            "UpstreamHttpMethod": [
+                "POST",
+                "PUT"
+            ],
+            "DownstreamPathTemplate": "/api/inventory/{everything}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "inventory_service",
+                    "Port": 8080
+                }
+            ],
+            "ServiceName": "InventoryService",
+            "LoadBalancerOptions": {
+                "Type": "RoundRobin"
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/payment/{everything}",
+            "UpstreamHttpMethod": [
+                "GET",
+                "POST"
+            ],
+            "DownstreamPathTemplate": "/api/payment/{everything}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "payment_service",
+                    "Port": 8080
+                }
+            ],
+            "ServiceName": "PaymentService",
+            "LoadBalancerOptions": {
+                "Type": "RoundRobin"
+            }
+        }
+    ],
+    "GlobalConfiguration": {
+        "BaseUrl": "http://localhost:5110",
+        "ServiceDiscoveryProvider": {
+            "Host": "consul",
+            "Port": 8500,
+            "Type": "PollConsul",
+            "PollingInterval": 100
+        },
+        "RateLimitOptions": {
+            "ClientWhitelist": [],
+            "EnableRateLimiting": true,
+            "Period": "1m",
+            "PeriodTimespan": 10,
+            "Limit": 5
+        }
+    }
+}
