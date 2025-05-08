@@ -6,5 +6,6 @@ public record ProductSearchFilters(
     int PageNumber = DomainConstants.DefaultPageNumber,
     int PageSize = DomainConstants.DefaultPageSize,
     string? Name = null,
-    string? Category = null
+    string? Category = null,
+    string? Sort = null
 );
