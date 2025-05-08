@@ -4,11 +4,7 @@ public class HttpClientConstants
 {
     public const string BaseAddress = "BaseAddress";
     public const string OrderPipelineName = "OrderPipeline";
-
-    public const string InventoryBaseAddress = "InventoryBaseAddress";
     public const string InventoryPipelineName = "InventoryPipeline";
-
-    public const string PaymentBaseAddress = "PaymentBaseAddress";
     public const string PaymentPipelineName = "PaymentPipeline";
 
     public const int RequestTimeoutInSeconds = 5;

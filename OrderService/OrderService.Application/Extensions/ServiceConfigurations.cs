@@ -39,7 +39,7 @@ public static class ServiceConfigurations
 
         services.AddHttpClient<IInventoryHttpClient, InventoryHttpClient>(client =>
         {
-            client.BaseAddress = new Uri(configuration[HttpClientConstants.InventoryBaseAddress] ?? "");
+            client.BaseAddress = new Uri(configuration[HttpClientConstants.BaseAddress] ?? "");
         })
         .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
         .AddResilienceHandler(
@@ -48,7 +48,7 @@ public static class ServiceConfigurations
 
         services.AddHttpClient<IPaymentHttpClient, PaymentHttpClient>(client =>
         {
-            client.BaseAddress = new Uri(configuration[HttpClientConstants.PaymentBaseAddress] ?? "");
+            client.BaseAddress = new Uri(configuration[HttpClientConstants.BaseAddress] ?? "");
         })
         .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
         .AddResilienceHandler(

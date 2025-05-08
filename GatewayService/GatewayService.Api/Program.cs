@@ -7,6 +7,7 @@ using Serilog;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Exporter;
+using Steeltoe.Discovery.Consul;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +18,7 @@ builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange
 
 builder.Services.AddDiscoveryClient(builder.Configuration);
 
-builder.Services.AddOcelot()
+builder.Services.AddOcelot(builder.Configuration)
     .AddConsul()
     .AddCacheManager(x => x.WithDictionaryHandle());
 
@@ -34,6 +35,8 @@ builder.Services.AddOpenTelemetry()
                 options.Protocol = OtlpExportProtocol.HttpProtobuf;
             });
     });
+
+builder.Services.AddServiceDiscovery(o => o.UseConsul());
 
 var app = builder.Build();
 

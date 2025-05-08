@@ -6,9 +6,9 @@ services:
       context: ./GatewayService
       dockerfile: Dockerfile
     image: gateway-service:latest
-    container_name: gateway-service-1
+    container_name: gateway-service
     ports:
-      - "5110:8080"
+      - "5000:8080"
     networks:
       - app_network
     depends_on:
@@ -20,7 +20,7 @@ services:
       context: ./UserService
       dockerfile: Dockerfile
     image: user-service:latest
-    container_name: user-service-1
+    container_name: user-service
     # ports:
     #   - "5120:8080"
     networks:
@@ -33,7 +33,7 @@ services:
       context: ./ProductService
       dockerfile: Dockerfile
     image: product-service:latest
-    container_name: product-service-1
+    container_name: product-service
     # ports:
     #   - "5130:8080"
     networks:
@@ -46,7 +46,7 @@ services:
       context: ./CartService
       dockerfile: Dockerfile
     image: cart-service:latest
-    container_name: cart-service-1
+    container_name: cart-service
     # ports:
     #   - "5140:8080"
     networks:
@@ -59,7 +59,7 @@ services:
       context: .
       dockerfile: ./OrderService/Dockerfile
     image: order-service:latest
-    container_name: order-service-1
+    container_name: order-service
     # ports:
     #   - "5150:8080"
     networks:
@@ -73,7 +73,7 @@ services:
       context: ./InventoryService
       dockerfile: Dockerfile
     image: inventory-service:latest
-    container_name: inventory-service-1
+    container_name: inventory-service
     # ports:
     #   - "5160:8080"
     networks:
@@ -86,7 +86,7 @@ services:
       context: .
       dockerfile: ./PaymentService/Dockerfile
     image: payment-service:latest
-    container_name: payment-service-1
+    container_name: payment-service
     # ports:
     #   - "5170:8080"
     networks:
@@ -99,7 +99,7 @@ services:
       context: .
       dockerfile: ./NotificationService/Dockerfile
     image: notification-service:latest
-    container_name: notification-service-1
+    container_name: notification-service
     depends_on:
       - rabbitmq
       - seq
@@ -112,7 +112,7 @@ services:
     image: rabbitmq:3-management
     container_name: rabbitmq
     ports:
-      - "5672:5672"
+      # - "5672:5672"
       - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
@@ -121,9 +121,9 @@ services:
 
   seq:
     image: datalust/seq:latest
-    container_name: seq-1
+    container_name: seq
     ports:
-      - "5431:5431"
+      # - "5431:5431"
       - "8081:80"
     environment:
       ACCEPT_EULA: "Y"
@@ -133,12 +133,10 @@ services:
       - app_network
 
   consul:
-    image: consul:latest  
+    image: hashicorp/consul:latest
+    container_name: consul
     ports:
-      - "8500:8500"  
-    command: "consul agent -dev -client=0.0.0.0"  
-    environment:
-      - CONSUL_BIND_INTERFACE=eth0
+      - "8500:8500"
     networks:
       - app_network
 

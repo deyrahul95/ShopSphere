@@ -3,10 +3,27 @@
         {
             "UpstreamPathTemplate": "/api/users/{everything}",
             "UpstreamHttpMethod": [
-                "GET",
-                "POST"
+                "GET"
             ],
             "DownstreamPathTemplate": "/api/users/{everything}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "user_service",
+                    "Port": 8080
+                }
+            ],
+            "ServiceName": "UserService",
+            "LoadBalancerOptions": {
+                "Type": "RoundRobin"
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/auth/{everything}",
+            "UpstreamHttpMethod": [
+                "POST"
+            ],
+            "DownstreamPathTemplate": "/api/auth/{everything}",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
