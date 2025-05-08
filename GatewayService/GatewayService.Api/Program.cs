@@ -1,13 +1,10 @@
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using Ocelot.Provider.Consul;
 using Ocelot.Cache.CacheManager;
-using Steeltoe.Discovery.Client;
 using Serilog;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Exporter;
-using Steeltoe.Discovery.Consul;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,11 +13,11 @@ builder.Host.UseSerilog((context, loggerConfig) =>
 
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 
-builder.Services.AddDiscoveryClient(builder.Configuration);
+// builder.Services.AddDiscoveryClient(builder.Configuration);
 
 builder.Services.AddOcelot(builder.Configuration)
-    .AddConsul()
     .AddCacheManager(x => x.WithDictionaryHandle());
+// .AddConsul()
 
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource.AddService("GatewayService"))
@@ -35,8 +32,6 @@ builder.Services.AddOpenTelemetry()
                 options.Protocol = OtlpExportProtocol.HttpProtobuf;
             });
     });
-
-builder.Services.AddServiceDiscovery(o => o.UseConsul());
 
 var app = builder.Build();
 

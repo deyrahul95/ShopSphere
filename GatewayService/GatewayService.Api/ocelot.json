@@ -13,9 +13,12 @@
                     "Port": 8080
                 }
             ],
-            "ServiceName": "UserService",
-            "LoadBalancerOptions": {
-                "Type": "RoundRobin"
+            "RateLimitOptions": {
+                "ClientWhitelist": [],
+                "EnableRateLimiting": true,
+                "Period": "1m",
+                "PeriodTimespan": 10,
+                "Limit": 5
             }
         },
         {
@@ -31,9 +34,12 @@
                     "Port": 8080
                 }
             ],
-            "ServiceName": "UserService",
-            "LoadBalancerOptions": {
-                "Type": "RoundRobin"
+            "RateLimitOptions": {
+                "ClientWhitelist": [],
+                "EnableRateLimiting": true,
+                "Period": "1m",
+                "PeriodTimespan": 10,
+                "Limit": 5
             }
         },
         {
@@ -49,9 +55,12 @@
                     "Port": 8080
                 }
             ],
-            "ServiceName": "ProductService",
-            "LoadBalancerOptions": {
-                "Type": "RoundRobin"
+            "RateLimitOptions": {
+                "ClientWhitelist": [],
+                "EnableRateLimiting": true,
+                "Period": "1m",
+                "PeriodTimespan": 10,
+                "Limit": 5
             },
             "FileCacheOptions": {
                 "TtlSeconds": 10,
@@ -73,9 +82,12 @@
                     "Port": 8080
                 }
             ],
-            "ServiceName": "CartService",
-            "LoadBalancerOptions": {
-                "Type": "RoundRobin"
+            "RateLimitOptions": {
+                "ClientWhitelist": [],
+                "EnableRateLimiting": true,
+                "Period": "1m",
+                "PeriodTimespan": 10,
+                "Limit": 5
             }
         },
         {
@@ -92,9 +104,12 @@
                     "Port": 8080
                 }
             ],
-            "ServiceName": "OrderService",
-            "LoadBalancerOptions": {
-                "Type": "RoundRobin"
+            "RateLimitOptions": {
+                "ClientWhitelist": [],
+                "EnableRateLimiting": true,
+                "Period": "1m",
+                "PeriodTimespan": 10,
+                "Limit": 5
             }
         },
         {
@@ -111,9 +126,12 @@
                     "Port": 8080
                 }
             ],
-            "ServiceName": "InventoryService",
-            "LoadBalancerOptions": {
-                "Type": "RoundRobin"
+            "RateLimitOptions": {
+                "ClientWhitelist": [],
+                "EnableRateLimiting": true,
+                "Period": "1m",
+                "PeriodTimespan": 10,
+                "Limit": 5
             }
         },
         {
@@ -130,26 +148,16 @@
                     "Port": 8080
                 }
             ],
-            "ServiceName": "PaymentService",
-            "LoadBalancerOptions": {
-                "Type": "RoundRobin"
+            "RateLimitOptions": {
+                "ClientWhitelist": [],
+                "EnableRateLimiting": true,
+                "Period": "1m",
+                "PeriodTimespan": 10,
+                "Limit": 5
             }
         }
     ],
     "GlobalConfiguration": {
-        "BaseUrl": "http://localhost:5110",
-        "ServiceDiscoveryProvider": {
-            "Host": "consul",
-            "Port": 8500,
-            "Type": "PollConsul",
-            "PollingInterval": 100
-        },
-        "RateLimitOptions": {
-            "ClientWhitelist": [],
-            "EnableRateLimiting": true,
-            "Period": "1m",
-            "PeriodTimespan": 10,
-            "Limit": 5
-        }
+        "BaseUrl": "http://localhost:5000"
     }
 }
