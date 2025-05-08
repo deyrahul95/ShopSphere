@@ -1,8 +1,15 @@
-using System.ComponentModel.DataAnnotations;
+using FluentValidation;
 
 namespace InventoryService.Application.Models;
 
-public record UpdateInventoryRequest(
-    [Required] int Quantity,
-    bool IsOrdered
-);
+public record UpdateInventoryRequest(int Quantity, bool IsOrdered);
+
+public class UpdateInventoryValidator : AbstractValidator<UpdateInventoryRequest>
+{
+    public UpdateInventoryValidator()
+    {
+        RuleFor(x => x.Quantity)
+            .NotEmpty()
+            .WithMessage("Quantity is required");
+    }
+}
