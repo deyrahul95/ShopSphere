@@ -1,9 +1,12 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http.Resilience;
 using OrderService.Application.Constants;
 using OrderService.Application.Handlers;
+using OrderService.Application.Models;
 using OrderService.Application.Services;
 using OrderService.Application.Services.Interfaces;
 using Polly;
@@ -14,6 +17,10 @@ public static class ServiceConfigurations
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters()
+                .AddValidatorsFromAssemblyContaining<CreateOrderValidator>();
+
         services.AddMassTransit(x =>
         {
             x.UsingRabbitMq((context, cfg) =>
