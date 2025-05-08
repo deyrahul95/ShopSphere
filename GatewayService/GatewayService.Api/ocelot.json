@@ -67,8 +67,15 @@
                 {
                     "Host": "product_service",
                     "Port": 8080
+                },
+                {
+                    "Host": "product_service-two",
+                    "Port": 8080
                 }
-            ]
+            ],
+            "LoadBalancerOptions": {
+                "Type": "RoundRobin"
+            }
         },
         {
             "UpstreamPathTemplate": "/api/products/{everything}",
@@ -81,8 +88,15 @@
                 {
                     "Host": "product_service",
                     "Port": 8080
+                },
+                {
+                    "Host": "product_service-two",
+                    "Port": 8080
                 }
             ],
+            "LoadBalancerOptions": {
+                "Type": "RoundRobin"
+            },
             "RateLimitOptions": {
                 "ClientWhitelist": [],
                 "EnableRateLimiting": true,
@@ -179,8 +193,15 @@
                 {
                     "Host": "inventory_service",
                     "Port": 8080
+                },
+                {
+                    "Host": "inventory_service-two",
+                    "Port": 8080
                 }
-            ]
+            ],
+            "LoadBalancerOptions": {
+                "Type": "RoundRobin"
+            }
         },
         {
             "UpstreamPathTemplate": "/api/inventory/{everything}",
@@ -194,8 +215,15 @@
                 {
                     "Host": "inventory_service",
                     "Port": 8080
+                },
+                {
+                    "Host": "inventory_service-two",
+                    "Port": 8080
                 }
             ],
+            "LoadBalancerOptions": {
+                "Type": "RoundRobin"
+            },
             "RateLimitOptions": {
                 "ClientWhitelist": [],
                 "EnableRateLimiting": true,
