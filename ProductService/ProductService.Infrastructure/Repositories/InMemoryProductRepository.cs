@@ -14,7 +14,9 @@ public class InMemoryProductRepository : IProductRepository
         return await Task.FromResult(product);
     }
 
-    public async Task<PaginatedResult<Product>> SearchProductsAsync(ProductSearchFilters searchFilters, CancellationToken cancellationToken = default)
+    public async Task<PaginatedResult<Product>> SearchProductsAsync(
+        ProductSearchFilters searchFilters,
+        CancellationToken cancellationToken = default)
     {
         var query = InMemoryDB.Products
                                             .AsQueryable()
@@ -32,6 +34,20 @@ public class InMemoryProductRepository : IProductRepository
             query = query.Where(item => item.Category.Contains(
                 searchFilters.Category,
                 StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (string.IsNullOrEmpty(searchFilters.Sort) is false)
+        {
+            switch (searchFilters.Sort.ToLower())
+            {
+                case SortOptions.PriceAsc:
+                    query = query.OrderBy(p => p.Price);
+                    break;
+
+                case SortOptions.PriceDesc:
+                    query = query.OrderByDescending(p => p.Price);
+                    break;
+            }
         }
 
         var totalItems = query.Count();

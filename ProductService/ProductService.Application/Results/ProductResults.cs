@@ -16,4 +16,8 @@ public static class ProductResults<T> where T : class
         statusCode: HttpStatusCode.OK,
         message: "Product fetched successfully",
         data: data);
+
+    public static ServiceResult<T> BadRequest(string message) => new(
+        statusCode: HttpStatusCode.BadRequest,
+        message: message);
 }

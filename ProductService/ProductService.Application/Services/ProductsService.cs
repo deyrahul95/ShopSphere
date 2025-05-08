@@ -44,11 +44,23 @@ public class ProductsService(
         {
             logger.LogInformation("Start searching products. Name: {Name}, Category: {Category}", request.Name, request.Category);
 
+            if (string.IsNullOrEmpty(request.Sort) is false)
+            {
+                if (SortOptions.ValidOptions.Contains(request.Sort.ToLower()) is false)
+                {
+                    return ProductResults<PaginatedResult<ProductDto>>.BadRequest(
+                        $"Invalid sort option. Allowed values: {string.Join(
+                            ", ",
+                            SortOptions.ValidOptions)}");
+                }
+            }
+
             var searchFilters = new ProductSearchFilters(
                 PageNumber: request.PageNumber ?? DomainConstants.DefaultPageNumber,
                 PageSize: request.PageSize ?? DomainConstants.DefaultPageSize,
                 Name: request.Name,
-                Category: request.Category
+                Category: request.Category,
+                Sort: request.Sort
             );
 
             logger.LogInformation("Product search filters. Filters: {@SearchFilters}", searchFilters);

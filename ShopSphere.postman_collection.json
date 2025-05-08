@@ -36,11 +36,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{userservice}}/health",
+							"raw": "{{userservice}}/users/health",
 							"host": [
 								"{{userservice}}"
 							],
 							"path": [
+								"users",
 								"health"
 							]
 						}
@@ -121,11 +122,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{productservice}}/health",
+							"raw": "{{productservice}}/products/health",
 							"host": [
 								"{{productservice}}"
 							],
 							"path": [
+								"products",
 								"health"
 							]
 						}
@@ -168,7 +170,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{productservice}}/products/search?name=dell&pageNumber=1&pageSize=5",
+							"raw": "{{productservice}}/products/search?pageNumber=2&pageSize=5&sort=price_asc",
 							"host": [
 								"{{productservice}}"
 							],
@@ -184,15 +186,20 @@
 								},
 								{
 									"key": "name",
-									"value": "dell"
+									"value": "dell",
+									"disabled": true
 								},
 								{
 									"key": "pageNumber",
-									"value": "1"
+									"value": "2"
 								},
 								{
 									"key": "pageSize",
 									"value": "5"
+								},
+								{
+									"key": "sort",
+									"value": "price_asc"
 								}
 							]
 						}
@@ -231,11 +238,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{cartservice}}/health",
+							"raw": "{{cartservice}}/cart/health",
 							"host": [
 								"{{cartservice}}"
 							],
 							"path": [
+								"cart",
 								"health"
 							]
 						}
@@ -317,7 +325,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"productId\": \"{{productId}}\",\r\n\t\"quantity\": \"{{productQuantity}}\"\r\n}",
+							"raw": "{\r\n\t\"productId\": \"60606060-6060-6060-6060-606060606060\",\r\n\t\"quantity\": \"1\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -395,11 +403,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{orderservice}}/health",
+							"raw": "{{orderservice}}/orders/health",
 							"host": [
 								"{{orderservice}}"
 							],
 							"path": [
+								"orders",
 								"health"
 							]
 						}
@@ -420,8 +429,7 @@
 									"const res = pm.response.json();\r",
 									"\r",
 									"if(res.statusCode === 201){\r",
-									"\tpm.collectionVariables.set(\"orderId\", res.data.id);\r",
-									"\tpm.collectionVariables.set(\"orderAmount\", res.data.totalPrice);\r",
+									"\tpm.collectionVariables.set(\"orderId\", res.data.orderId);\r",
 									"}"
 								],
 								"type": "text/javascript",
@@ -444,7 +452,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"cartId\": \"{{cartId}}\",\r\n\t\"paymentMode\": \"CreditCard\"\r\n}",
+							"raw": "{\r\n\t\"cartId\": \"94aa95bf-07ff-4fa6-9ddb-7f956321174f\",\r\n\t\"paymentMode\": \"UPI\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -580,11 +588,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{inventoryservice}}/health",
+							"raw": "{{inventoryservice}}/inventory/health",
 							"host": [
 								"{{inventoryservice}}"
 							],
 							"path": [
+								"inventory",
 								"health"
 							]
 						}
@@ -656,11 +665,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{paymentservice}}/health",
+							"raw": "{{paymentservice}}/payment/health",
 							"host": [
 								"{{paymentservice}}"
 							],
 							"path": [
+								"payment",
 								"health"
 							]
 						}
@@ -774,7 +784,12 @@
 	"variable": [
 		{
 			"key": "userservice",
-			"value": "http://localhost:5120/api",
+			"value": "http://localhost:5000/api",
+			"type": "string"
+		},
+		{
+			"key": "userservice",
+			"value": "http://localhost:5000/api",
 			"type": "string"
 		},
 		{
@@ -784,17 +799,17 @@
 		},
 		{
 			"key": "productservice",
-			"value": "http://localhost:5130/api",
+			"value": "http://localhost:5000/api",
 			"type": "string"
 		},
 		{
 			"key": "cartservice",
-			"value": "http://localhost:5140/api",
+			"value": "http://localhost:5000/api",
 			"type": "string"
 		},
 		{
 			"key": "orderservice",
-			"value": "http://localhost:5150/api",
+			"value": "http://localhost:5000/api",
 			"type": "string"
 		},
 		{
@@ -814,12 +829,12 @@
 		},
 		{
 			"key": "inventoryservice",
-			"value": "http://localhost:5160/api",
+			"value": "http://localhost:5000/api",
 			"type": "string"
 		},
 		{
 			"key": "paymentservice",
-			"value": "http://localhost:5170/api",
+			"value": "http://localhost:5000/api",
 			"type": "string"
 		},
 		{
