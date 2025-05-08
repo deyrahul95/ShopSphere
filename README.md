@@ -6,58 +6,57 @@ For the given e-commerce user flow, the following microservices are identified b
 
 ### 1.1 Auth Service
 
-* **Responsibilities**:
+- **Responsibilities**:
 
-  * Validates user login credentials.
-  * Mocks token/session generation.
-  * Provides user identity to other services.
+  - Validates user login credentials.
+  - Mocks token/session generation.
+  - Provides user identity to other services.
 
 ### 1.2 Product Service
 
-* **Responsibilities**:
+- **Responsibilities**:
 
-  * Maintains the catalog of products.
-  * Allows querying products by name or category.
-  * Provides detailed product information.
-
+  - Maintains the catalog of products.
+  - Allows querying products by name or category.
+  - Provides detailed product information.
 
 ### 1.3 Cart Service
 
-* **Responsibilities**:
+- **Responsibilities**:
 
-  * Manages user shopping cart.
-  * Adds/removes items and retrieves cart content.
+  - Manages user shopping cart.
+  - Adds/removes items and retrieves cart content.
 
 ### 1.4 Order Service
 
-* **Responsibilities**:
+- **Responsibilities**:
 
-  * Initiates order placement.
-  * Validates cart contents.
-  * Orchestrates inventory check and mock payment.
-  * Manages order status transitions.
+  - Initiates order placement.
+  - Validates cart contents.
+  - Orchestrates inventory check and mock payment.
+  - Manages order status transitions.
 
 ### 1.5 Inventory Service
 
-* **Responsibilities**:
+- **Responsibilities**:
 
-  * Maintains inventory stock levels.
-  * Supports reserving and releasing stock.
+  - Maintains inventory stock levels.
+  - Supports reserving and releasing stock.
 
 ### 1.6 Notification Service
 
-* **Responsibilities**:
+- **Responsibilities**:
 
-  * Sends/logs notifications based on order events.
-  * Supports logging for audit purposes.
+  - Sends/logs notifications based on order events.
+  - Supports logging for audit purposes.
 
 ### API Gateway
 
-* **Responsibilities**:
+- **Responsibilities**:
 
-  * Acts as the single entry point for external clients.
-  * Routes requests to respective services.
-  * Handles cross-cutting concerns (rate limiting, caching, load balancing).
+  - Acts as the single entry point for external clients.
+  - Routes requests to respective services.
+  - Handles cross-cutting concerns (rate limiting, caching, load balancing).
 
 ---
 
@@ -89,7 +88,7 @@ Response: { product }
 
 ### Cart Service
 
-* User id will be retrieved from access token provided in request header
+- User id will be retrieved from access token provided in request header
 
 ```
 POST /cart/add
@@ -124,6 +123,7 @@ POST /inventory/check
 ```
 
 ### Notification Service (Internal)
+
 I am using message broker for notification
 
 ```
@@ -141,27 +141,27 @@ publish events
 
 ### Style
 
-* **RESTful HTTP**: All services communicate via RESTful HTTP APIs.
-* **Synchronous communication**: Order Service calls Inventory and Notification services directly using http client.
+- **RESTful HTTP**: All services communicate via RESTful HTTP APIs.
+- **Synchronous communication**: Order Service calls Inventory and Notification services directly using http client.
 
 ### Flow Example (Placing Order):
 
 1. User adds product to cart via Cart Service.
 2. User places order via Order Service:
 
-   * Order Service calls Cart Service to get cart items.
-   * Calls Inventory Service to check items availability.
-   * Mocks payment logic.
-   * If successful: creates order and calls Notification Service.
-   * If failed: calls Notification Service with cancellation.
+   - Order Service calls Cart Service to get cart items.
+   - Calls Inventory Service to check items availability.
+   - Mocks payment logic.
+   - If successful: creates order and calls Notification Service.
+   - If failed: calls Notification Service with cancellation.
 
 ### Assumptions:
 
-* **Authentication** JWT based access
-* **Inventory** system holds product ID and stock only (no full product info).
-* **Notification** system is a logger (no real email/SMS integration).
-* **No orchestration tool** like Saga or choreography; Order Service drives the transaction.
-* Each microservice has its **own database** (In-memory).
+- **Authentication** JWT based access
+- **Inventory** system holds product ID and stock only (no full product info).
+- **Notification** system is a logger (no real email/SMS integration).
+- **No orchestration tool** like Saga or choreography; Order Service drives the transaction.
+- Each microservice has its **own database** (In-memory).
 
 ---
 
@@ -190,3 +190,32 @@ publish events
 ```
 
 ---
+
+## Docker images used
+
+- [GatewayService](https://hub.docker.com/r/rahuldey8320/shopsphare-gateway-service)
+- [UserService](https://hub.docker.com/r/rahuldey8320/shopsphare-user-service)
+- [ProductService](https://hub.docker.com/r/rahuldey8320/shopsphare-product-service)
+- [CartService](https://hub.docker.com/r/rahuldey8320/shopsphare-cart-service)
+- [OrderService](https://hub.docker.com/r/rahuldey8320/shopsphare-order-service)
+- [InventoryService](https://hub.docker.com/r/rahuldey8320/shopsphare-inventory-service)
+- [PaymentService](https://hub.docker.com/r/rahuldey8320/shopsphare-payment-service)
+- [NotificationService](https://hub.docker.com/r/rahuldey8320/shopsphare-notification-service)
+
+---
+
+## Boot Application
+
+```bash
+docker compose -f prod.docker-compose.yml up
+```
+
+## Stop Application
+
+```bash
+docker compose -f prod.docker-compose.yml down
+```
+
+## SEQ UI (Logging & Distributed Tracing)
+
+Open [http://localhost:8081](http://localhost:8081)
