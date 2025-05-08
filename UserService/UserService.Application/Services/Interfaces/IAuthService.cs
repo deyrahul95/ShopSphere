@@ -5,5 +5,5 @@ namespace UserService.Application.Services.Interfaces;
 
 public interface IAuthService
 {
-    Task<ServiceResult<LoginResponseModel>> Login(LoginRequestModel request, CancellationToken cancellationToken = default);
+    Task<ServiceResult<LoginResponse>> Login(LoginRequest request, CancellationToken cancellationToken = default);
 }
