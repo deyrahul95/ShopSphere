@@ -93,7 +93,6 @@ public static class ServiceConfigurations
             return channel;
         });
         services.AddSingleton<ConcurrentDictionary<Guid, InventoryCheckStatus>>();
-
         services.AddHostedService<InventoryCheckService>();
 
         return services;

@@ -56,7 +56,7 @@ public class InventoryCheckService(
                 "Start fetching inventory details.Product Id: {ProductId}",
                 request.ProductId);
 
-            var result = await inventoryHttpClient.CheckInventory(request: request);
+            var result = await inventoryHttpClient.CheckInventory(request: request, token: job.Token);
 
             if (result == null || result.StatusCode != HttpStatusCode.OK)
             {

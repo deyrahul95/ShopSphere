@@ -7,5 +7,6 @@ public interface IInventoryHttpClient
 {
     Task<ServiceResult<InventoryResponse>?> CheckInventory(
         InventoryRequest request,
+        string? token = null,
         CancellationToken cancellationToken = default);    
 }

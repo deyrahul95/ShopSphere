@@ -2,7 +2,9 @@ using System.Collections.Concurrent;
 using System.Net;
 using System.Threading.Channels;
 using MassTransit;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 using OrderService.Application.DTOs;
 using OrderService.Application.Extensions;
 using OrderService.Application.Models;
@@ -22,6 +24,7 @@ public class OrdersService(
     IPublishEndpoint publishEndpoint,
     Channel<InventoryCheckJob> channel,
     ConcurrentDictionary<Guid, InventoryCheckStatus> inventoryStatusDictionary,
+    IHttpContextAccessor httpContextAccessor,
     ILogger<OrdersService> logger) : IOrdersService
 {
     public async Task<ServiceResult<OrderAcceptedResponse>> CreateOrder(
@@ -327,10 +330,16 @@ public class OrdersService(
             inventoryRequests.Add(request);
         }
 
+        var httpContext = httpContextAccessor.HttpContext;
+        StringValues token = string.Empty;
+
+        httpContext?.Request.Headers.TryGetValue("Authorization", out token);
+
         var job = new InventoryCheckJob(
             OrderId: orderId,
             UserId: userId,
-            InventoryRequests: inventoryRequests);
+            InventoryRequests: inventoryRequests,
+            Token: token);
         await channel.Writer.WriteAsync(job);
 
         inventoryStatusDictionary[orderId] = InventoryCheckStatus.Queued;
