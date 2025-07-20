@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   user_service:
     build:
@@ -106,13 +104,14 @@ services:
       - app_network
 
   seq:
-    image: datalust/seq:latest
+    image: datalust/seq:2025.2
     container_name: seq-1
     ports:
       - "5431:5431"
       - "8081:80"
     environment:
       ACCEPT_EULA: "Y"
+      SEQ_PASSWORD: "password"
     volumes:
       - seq_data:/data
     networks:
