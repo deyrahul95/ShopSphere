@@ -1,14 +1,25 @@
-using System.ComponentModel.DataAnnotations;
 using CartService.Application.Constants;
 using CartService.Domain.Constants;
+using FluentValidation;
 
 namespace CartService.Application.Models;
 
-public class AddToCartRequest
-{
-    [Required]
-    public Guid ProductId { get; set; }
+public record AddToCartRequest(Guid ProductId, int Quantity);
 
-    [Range(ValidationConstants.MinQuantityPerItemInCart, DomainConstants.MaxQuantityPerItemInCart)]
-    public int Quantity { get; set; } = ValidationConstants.MinQuantityPerItemInCart;
+public class AddToCartValidator : AbstractValidator<AddToCartRequest>
+{
+    public AddToCartValidator()
+    {
+        RuleFor(x => x.ProductId)
+            .NotEmpty()
+            .WithMessage("Product id is required")
+            .NotEqual(Guid.Empty)
+            .WithMessage("Product id must be a valid guid");
+
+        RuleFor(x => x.Quantity)
+            .NotEmpty()
+            .WithMessage("Quantity is required")
+            .InclusiveBetween(ValidationConstants.MinQuantityPerItemInCart, DomainConstants.MaxQuantityPerItemInCart)
+            .WithMessage($"Quantity must be in between {ValidationConstants.MinQuantityPerItemInCart} and {DomainConstants.MaxQuantityPerItemInCart}");
+    }
 }

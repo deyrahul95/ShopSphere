@@ -1,5 +1,7 @@
 using System.Collections.Concurrent;
 using System.Threading.Channels;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +22,10 @@ public static class ServiceConfigurations
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters()
+                .AddValidatorsFromAssemblyContaining<CreateOrderValidator>();
+
         services.AddMassTransit(x =>
         {
             x.AddConsumer<OrderCreatedConsumer>(
@@ -65,7 +71,7 @@ public static class ServiceConfigurations
 
         services.AddHttpClient<IInventoryHttpClient, InventoryHttpClient>(client =>
         {
-            client.BaseAddress = new Uri(configuration[HttpClientConstants.InventoryBaseAddress] ?? "");
+            client.BaseAddress = new Uri(configuration[HttpClientConstants.BaseAddress] ?? "");
         })
         .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
         .AddResilienceHandler(
@@ -74,7 +80,7 @@ public static class ServiceConfigurations
 
         services.AddHttpClient<IPaymentHttpClient, PaymentHttpClient>(client =>
         {
-            client.BaseAddress = new Uri(configuration[HttpClientConstants.PaymentBaseAddress] ?? "");
+            client.BaseAddress = new Uri(configuration[HttpClientConstants.BaseAddress] ?? "");
         })
         .AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
         .AddResilienceHandler(
