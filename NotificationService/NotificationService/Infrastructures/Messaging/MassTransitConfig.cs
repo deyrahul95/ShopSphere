@@ -6,6 +6,7 @@ using NotificationService.Features.OrderConfirmed;
 using NotificationService.Features.OrderCreated;
 using NotificationService.Features.PaymentCompleted;
 using NotificationService.Features.PaymentFailed;
+using NotificationService.Features.PaymentInitiated;
 
 namespace NotificationService.Infrastructures.Messaging;
 
@@ -24,6 +25,10 @@ public static class MassTransitConfig
                     MassTransitConstants.MaxRetryCount,
                     TimeSpan.FromSeconds(MassTransitConstants.RetryTimeSpanInSecond))));
             x.AddConsumer<OrderCancelledConsumer>(
+                cfg => cfg.UseMessageRetry(r => r.Interval(
+                    MassTransitConstants.MaxRetryCount,
+                    TimeSpan.FromSeconds(MassTransitConstants.RetryTimeSpanInSecond))));
+            x.AddConsumer<PaymentInitiatedConsumer>(
                 cfg => cfg.UseMessageRetry(r => r.Interval(
                     MassTransitConstants.MaxRetryCount,
                     TimeSpan.FromSeconds(MassTransitConstants.RetryTimeSpanInSecond))));

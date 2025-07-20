@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   gateway_service:
     build:
@@ -37,14 +35,6 @@ services:
     depends_on:
       - seq
 
-  product_service-two:
-    image: product-service:latest
-    container_name: product-service-two
-    networks:
-      - app_network
-    depends_on:
-      - seq
-
   cart_service:
     build:
       context: ./CartService
@@ -74,14 +64,6 @@ services:
       dockerfile: Dockerfile
     image: inventory-service:latest
     container_name: inventory-service
-    networks:
-      - app_network
-    depends_on:
-      - seq
-
-  inventory_service-two:
-    image: inventory-service:latest
-    container_name: inventory-service-two
     networks:
       - app_network
     depends_on:
@@ -123,12 +105,13 @@ services:
       - app_network
 
   seq:
-    image: datalust/seq:latest
+    image: datalust/seq:2025.2
     container_name: seq
     ports:
       - "8081:80"
     environment:
       ACCEPT_EULA: "Y"
+      SEQ_PASSWORD: "password"
     volumes:
       - seq_data:/data
     networks:

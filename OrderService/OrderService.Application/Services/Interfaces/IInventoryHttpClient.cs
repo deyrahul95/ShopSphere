@@ -5,7 +5,8 @@ namespace OrderService.Application.Services.Interfaces;
 
 public interface IInventoryHttpClient
 {
-    Task<ServiceResult<CheckInventoryResponse>?> CheckInventory(
-        CheckInventoryRequest request,
+    Task<ServiceResult<InventoryResponse>?> CheckInventory(
+        InventoryRequest request,
+        string? token = null,
         CancellationToken cancellationToken = default);    
 }

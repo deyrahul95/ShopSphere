@@ -170,7 +170,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{productservice}}/products/search?pageNumber=2&pageSize=5&sort=price_asc",
+							"raw": "{{productservice}}/products/search?category=laptop&pageNumber=1&pageSize=10",
 							"host": [
 								"{{productservice}}"
 							],
@@ -181,8 +181,7 @@
 							"query": [
 								{
 									"key": "category",
-									"value": "laptop",
-									"disabled": true
+									"value": "laptop"
 								},
 								{
 									"key": "name",
@@ -191,15 +190,16 @@
 								},
 								{
 									"key": "pageNumber",
-									"value": "2"
-								},
-								{
-									"key": "pageSize",
-									"value": "5"
+									"value": "1"
 								},
 								{
 									"key": "sort",
-									"value": "price_asc"
+									"value": "price_asc",
+									"disabled": true
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
 								}
 							]
 						}
@@ -212,13 +212,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{productservice}}/products/{{productId}}",
+							"raw": "{{productservice}}/products/11111111-1111-1111-1111-111111111111",
 							"host": [
 								"{{productservice}}"
 							],
 							"path": [
 								"products",
-								"{{productId}}"
+								"11111111-1111-1111-1111-111111111111"
 							]
 						}
 					},
@@ -325,7 +325,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"productId\": \"60606060-6060-6060-6060-606060606060\",\r\n\t\"quantity\": \"1\"\r\n}",
+							"raw": "{\r\n\t\"productId\": \"{{productId}}\",\r\n\t\"quantity\": {{productQuantity}}\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -352,7 +352,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"productId\": \"a3556490-a1bd-4c1a-85c6-fcf3cce587da\"\r\n}",
+							"raw": "{\r\n\t\"productId\": \"{{productId}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -422,13 +422,13 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 201\", function () {\r",
-									"\tpm.response.to.have.status(201);\r",
+									"pm.test(\"Status code is 202\", function () {\r",
+									"\tpm.response.to.have.status(202);\r",
 									"});\r",
 									"\r",
 									"const res = pm.response.json();\r",
 									"\r",
-									"if(res.statusCode === 201){\r",
+									"if(res.statusCode === 202){\r",
 									"\tpm.collectionVariables.set(\"orderId\", res.data.orderId);\r",
 									"}"
 								],
@@ -452,7 +452,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"cartId\": \"94aa95bf-07ff-4fa6-9ddb-7f956321174f\",\r\n\t\"paymentMode\": \"UPI\"\r\n}",
+							"raw": "{\r\n\t\"cartId\": \"{{cartId}}\",\r\n\t\"paymentMode\": \"UPI\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -478,8 +478,11 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
 									"pm.test(\"Status code is 200\", function () {\r",
 									"\tpm.response.to.have.status(200);\r",
+									"\tpm.collectionVariables.set(\"orderAmount\", response.data.totalPrice);\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -489,8 +492,11 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"exec": [],
-								"type": "text/javascript"
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -788,11 +794,6 @@
 			"type": "string"
 		},
 		{
-			"key": "userservice",
-			"value": "http://localhost:5000/api",
-			"type": "string"
-		},
-		{
 			"key": "token",
 			"value": "",
 			"type": "string"
@@ -814,11 +815,6 @@
 		},
 		{
 			"key": "productId",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "cartId",
 			"value": "",
 			"type": "string"
 		},
@@ -846,6 +842,10 @@
 			"key": "productQuantity",
 			"value": "1",
 			"type": "string"
+		},
+		{
+			"key": "cartId",
+			"value": ""
 		}
 	]
 }

@@ -7,8 +7,8 @@ public class HttpClientConstants
     public const string InventoryPipelineName = "InventoryPipeline";
     public const string PaymentPipelineName = "PaymentPipeline";
 
-    public const int RequestTimeoutInSeconds = 5;
-    public const int MaxRetryCount = 3;
+    public const int RequestTimeoutInSeconds = 10;
+    public const int MaxRetryCount = 2;
     public const int RetryDelayInMilliseconds = 500;
     public const int SamplingDurationInSeconds = 30;
     public const double FailureRatio = 0.1;

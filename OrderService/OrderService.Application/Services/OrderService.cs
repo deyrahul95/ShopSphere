@@ -1,6 +1,10 @@
+using System.Collections.Concurrent;
 using System.Net;
+using System.Threading.Channels;
 using MassTransit;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 using OrderService.Application.DTOs;
 using OrderService.Application.Extensions;
 using OrderService.Application.Models;
@@ -17,12 +21,13 @@ namespace OrderService.Application.Services;
 public class OrdersService(
     IOrderRepository orderRepository,
     ICartHttpClient cartHttpClient,
-    IInventoryHttpClient inventoryHttpClient,
-    IPaymentHttpClient paymentHttpClient,
     IPublishEndpoint publishEndpoint,
+    Channel<InventoryCheckJob> channel,
+    ConcurrentDictionary<Guid, InventoryCheckStatus> inventoryStatusDictionary,
+    IHttpContextAccessor httpContextAccessor,
     ILogger<OrdersService> logger) : IOrdersService
 {
-    public async Task<ServiceResult<OrderDto>> CreateOrder(
+    public async Task<ServiceResult<OrderAcceptedResponse>> CreateOrder(
         Guid userId,
         CreateOrderRequest request,
         CancellationToken cancellationToken = default)
@@ -33,7 +38,7 @@ public class OrdersService(
 
             if (isSuccess is false)
             {
-                return OrderResults<OrderDto>.HttpRequestFailed(result);
+                return OrderResults<OrderAcceptedResponse>.HttpRequestFailed(result);
             }
 
             var cart = result?.Data;
@@ -44,7 +49,7 @@ public class OrdersService(
                     "Cart not found. Cart Id: {CartId}, User Id: {UserId}",
                     request.CartId,
                     userId);
-                return OrderResults<OrderDto>.CartNotFound(request.CartId);
+                return OrderResults<OrderAcceptedResponse>.CartNotFound(request.CartId);
             }
 
             if (cart.Items.Count == 0)
@@ -53,7 +58,7 @@ public class OrdersService(
                     "Cart has no items to order. Cart Id: {CartId}, User Id: {UserId}",
                     request.CartId,
                     userId);
-                return OrderResults<OrderDto>.NoItemsFound(request.CartId);
+                return OrderResults<OrderAcceptedResponse>.NoItemsFound(request.CartId);
             }
 
             var order = await CreateNewOrder(
@@ -70,43 +75,14 @@ public class OrdersService(
                 "Order created successfully. Order: {@Order}",
                 order);
 
-            await ClearCart(cancellationToken);
-
-            var isStockAvailable = await CheckInventory(
-                orderItems: order.Items,
-                cancellationToken: cancellationToken);
-
-            if (isStockAvailable is false)
-            {
-                order.UpdateOrderState(OrderStatus.Cancelled);
-                await orderRepository.UpdateOrder(order: order, cancellationToken: cancellationToken);
-
-                await publishEndpoint.Publish(
-                    message: new OrderCancelledEvent(
-                        OrderId: order.Id,
-                        UserId: order.UserId,
-                        Error: "Order Items out of stock"),
-                    cancellationToken: cancellationToken);
-
-                return OrderResults<OrderDto>.StockUnavailable(order.ToDto());
-            }
-
-            order.UpdateOrderState(OrderStatus.Confirmed);
-
-            var paymentStatus = await MakePayment(
+            await CreateInventoryCheckJob(
                 orderId: order.Id,
-                amount: order.TotalAmount,
-                paymentMode: request.PaymentMode,
-                cancellationToken: cancellationToken);
+                userId: userId,
+                orderItems: order.Items);
 
-            order.UpdatePaymentState(paymentStatus);
-            await orderRepository.UpdateOrder(order: order, cancellationToken: cancellationToken);
-
-            await publishEndpoint.Publish(
-                message: new OrderConfirmedEvent(OrderId: order.Id, UserId: order.UserId),
-                cancellationToken: cancellationToken);
-
-            return OrderResults<OrderDto>.OrderCreated(order.ToDto());
+            return OrderResults<OrderAcceptedResponse>.OrderAccepted(new OrderAcceptedResponse(
+                OrderId: order.Id,
+                Status: InventoryCheckStatus.Queued.ToString()));
         }
         catch (ValidationException ex)
         {
@@ -116,7 +92,7 @@ public class OrdersService(
                 userId,
                 ex.Message);
 
-            return OrderResults<OrderDto>.ValidationFailed([ex.ToError()]);
+            return OrderResults<OrderAcceptedResponse>.ValidationFailed([ex.ToError()]);
         }
         catch (Exception ex)
         {
@@ -126,7 +102,7 @@ public class OrdersService(
                 userId,
                 ex.Message);
 
-            return OrderResults<OrderDto>.InternalServerError;
+            return OrderResults<OrderAcceptedResponse>.InternalServerError;
         }
     }
 
@@ -195,11 +171,14 @@ public class OrdersService(
                 "Order fetched successfully. Order: {@Order}",
                 order);
 
+            inventoryStatusDictionary.TryGetValue(orderId, out var jobStatus);
+
             var orderStatusResponse = new OrderStatusResponse(
+                JobStatus: jobStatus.ToString(),
                 OrderStatus: order.OrderState,
                 OrderPaymentStatus: order.PaymentState);
 
-            return OrderResults<OrderStatusResponse>.OrderFetched(orderStatusResponse);
+            return OrderResults<OrderStatusResponse>.OrderStatusFetched(orderStatusResponse);
         }
         catch (Exception ex)
         {
@@ -335,97 +314,38 @@ public class OrdersService(
         return await orderRepository.CreateOrder(order: order, cancellationToken: cancellationToken);
     }
 
-    private async Task<bool> ClearCart(CancellationToken cancellationToken)
+    private async Task CreateInventoryCheckJob(
+        Guid orderId,
+        Guid userId,
+        List<OrderItem> orderItems)
     {
-        logger.LogInformation("Start clearing cart details.");
-        var statusCode = await cartHttpClient.ClearCart(cancellationToken);
+        logger.LogInformation("Start creating inventory check job. Order Id: {OrderId}", orderId);
+        List<InventoryRequest> inventoryRequests = [];
 
-        if (statusCode != HttpStatusCode.NoContent)
-        {
-            logger.LogWarning("Failed to cleared cart details");
-            return false;
-        }
-
-        logger.LogInformation("Cart details cleared successfully");
-        return true;
-    }
-
-    private async Task<bool> CheckInventory(List<OrderItem> orderItems, CancellationToken cancellationToken)
-    {
         foreach (var item in orderItems)
         {
-            var checkInventoryRequest = new CheckInventoryRequest(
+            var request = new InventoryRequest(
                 ProductId: item.ProductId,
                 Quantity: item.Quantity);
-
-            logger.LogInformation("Start fetching inventory details.Product Id: {ProductId}", item.ProductId);
-
-            var result = await inventoryHttpClient.CheckInventory(
-                request: checkInventoryRequest,
-                cancellationToken: cancellationToken);
-
-            if (result == null || result.StatusCode != HttpStatusCode.OK)
-            {
-                logger.LogWarning(
-                    "Failed to fetched inventory details. Result: {@Result}",
-                    result);
-                return false;
-            }
-
-            logger.LogInformation("Inventory details fetched successfully. Product Id: {ProductId}", item.ProductId);
-
-            if (result.Data?.Available is false)
-            {
-                logger.LogWarning("Product is out of stock.Product Id: {ProductId}", item.ProductId);
-                return false;
-            }
+            inventoryRequests.Add(request);
         }
 
-        return true;
-    }
+        var httpContext = httpContextAccessor.HttpContext;
+        StringValues token = string.Empty;
 
-    private async Task<OrderPaymentStatus> MakePayment(
-        Guid orderId,
-        decimal amount,
-        PaymentMode paymentMode,
-        CancellationToken cancellationToken)
-    {
-        logger.LogInformation("Start make payment.");
-        var request = new ProcessPaymentRequest
-        {
-            OrderId = orderId,
-            Amount = amount,
-            PaymentMode = paymentMode
-        };
+        httpContext?.Request.Headers.TryGetValue("Authorization", out token);
 
-        var result = await paymentHttpClient.ProcessPayment(
-            request: request,
-            cancellationToken: cancellationToken);
+        var job = new InventoryCheckJob(
+            OrderId: orderId,
+            UserId: userId,
+            InventoryRequests: inventoryRequests,
+            Token: token);
+        await channel.Writer.WriteAsync(job);
 
-        if (result == null || result.StatusCode != HttpStatusCode.OK)
-        {
-            logger.LogWarning(
-                "Failed to make payment. Result: {@Result}",
-                result);
-            return OrderPaymentStatus.Failed;
-        }
-
+        inventoryStatusDictionary[orderId] = InventoryCheckStatus.Queued;
         logger.LogInformation(
-            "Payment completed. Result: {@Result}",
-            result);
-
-        var paymentDto = result.Data;
-
-        if (paymentDto is null)
-        {
-            return OrderPaymentStatus.Failed;
-        }
-
-        if (paymentDto.PaymentStatus.Equals("Completed", StringComparison.OrdinalIgnoreCase))
-        {
-            return OrderPaymentStatus.Paid;
-        }
-
-        return OrderPaymentStatus.Failed;
+            "Inventory check job created for Order Id: {OrderId} with status: {Status}",
+            orderId,
+            InventoryCheckStatus.Queued);
     }
 }

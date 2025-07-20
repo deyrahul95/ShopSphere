@@ -219,3 +219,8 @@ docker compose -f prod.docker-compose.yml down
 ## SEQ UI (Logging & Distributed Tracing)
 
 Open [http://localhost:8081](http://localhost:8081)
+
+## TODOS:
+ - Need to clear cart after order created
+ - Need to update inventory after payment successful
+ - Need to update order status after payment [success / failure]

@@ -67,10 +67,6 @@
                 {
                     "Host": "product_service",
                     "Port": 8080
-                },
-                {
-                    "Host": "product_service-two",
-                    "Port": 8080
                 }
             ],
             "LoadBalancerOptions": {
@@ -87,10 +83,6 @@
             "DownstreamHostAndPorts": [
                 {
                     "Host": "product_service",
-                    "Port": 8080
-                },
-                {
-                    "Host": "product_service-two",
                     "Port": 8080
                 }
             ],
@@ -193,10 +185,6 @@
                 {
                     "Host": "inventory_service",
                     "Port": 8080
-                },
-                {
-                    "Host": "inventory_service-two",
-                    "Port": 8080
                 }
             ],
             "LoadBalancerOptions": {
@@ -214,10 +202,6 @@
             "DownstreamHostAndPorts": [
                 {
                     "Host": "inventory_service",
-                    "Port": 8080
-                },
-                {
-                    "Host": "inventory_service-two",
                     "Port": 8080
                 }
             ],

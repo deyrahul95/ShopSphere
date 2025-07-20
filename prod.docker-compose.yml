@@ -98,7 +98,7 @@ services:
       - app_network
 
   seq:
-    image: datalust/seq:latest
+    image: datalust/seq:2025.2
     container_name: seq
     ports:
       - "8081:80"
