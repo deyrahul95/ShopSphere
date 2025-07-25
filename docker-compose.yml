@@ -3,7 +3,7 @@ services:
     build:
       context: ./GatewayService
       dockerfile: Dockerfile
-    image: gateway-service:latest
+    image: shopsphare-gateway-service:${TAG:-latest}
     container_name: gateway-service
     ports:
       - "5000:8080"
@@ -17,7 +17,7 @@ services:
     build:
       context: ./UserService
       dockerfile: Dockerfile
-    image: user-service:latest
+    image: shopsphare-user-service:${TAG:-latest}
     container_name: user-service
     networks:
       - app_network
@@ -28,7 +28,7 @@ services:
     build:
       context: ./ProductService
       dockerfile: Dockerfile
-    image: product-service:latest
+    image: shopsphare-product-service:${TAG:-latest}
     container_name: product-service
     networks:
       - app_network
@@ -39,7 +39,7 @@ services:
     build:
       context: ./CartService
       dockerfile: Dockerfile
-    image: cart-service:latest
+    image: shopsphare-cart-service:${TAG:-latest}
     container_name: cart-service
     networks:
       - app_network
@@ -50,7 +50,7 @@ services:
     build:
       context: .
       dockerfile: ./OrderService/Dockerfile
-    image: order-service:latest
+    image: shopsphare-order-service:${TAG:-latest}
     container_name: order-service
     networks:
       - app_network
@@ -62,7 +62,7 @@ services:
     build:
       context: ./InventoryService
       dockerfile: Dockerfile
-    image: inventory-service:latest
+    image: shopsphare-inventory-service:${TAG:-latest}
     container_name: inventory-service
     networks:
       - app_network
@@ -73,7 +73,7 @@ services:
     build:
       context: .
       dockerfile: ./PaymentService/Dockerfile
-    image: payment-service:latest
+    image: shopsphare-payment-service:${TAG:-latest}
     container_name: payment-service
     networks:
       - app_network
@@ -84,7 +84,7 @@ services:
     build:
       context: .
       dockerfile: ./NotificationService/Dockerfile
-    image: notification-service:latest
+    image: shopsphare-notification-service:${TAG:-latest}
     container_name: notification-service
     depends_on:
       - rabbitmq
@@ -116,14 +116,6 @@ services:
       - seq_data:/data
     networks:
       - app_network
-
-  # consul:
-  #   image: hashicorp/consul:latest
-  #   container_name: consul
-  #   ports:
-  #     - "8500:8500"
-  #   networks:
-  #     - app_network
 
 networks:
   app_network:
