@@ -204,16 +204,34 @@ publish events
 
 ---
 
+## Build Application for Local Development
+
+```bash
+./build.sh
+```
+
+## Deploy Images into Docker hub
+
+```bash
+./deploy.sh
+```
+
 ## Boot Application
 
 ```bash
-docker compose -f prod.docker-compose.yml up
+docker compose -f prod-compose.yml up
 ```
 
 ## Stop Application
 
 ```bash
-docker compose -f prod.docker-compose.yml down
+docker compose -f prod-compose.yml down
+```
+
+## Clean up local images
+
+```bash
+./cleanup.sh
 ```
 
 ## SEQ UI (Logging & Distributed Tracing)
