@@ -10,7 +10,6 @@ services:
     networks:
       - app_network
     depends_on:
-      # - consul
       - seq
 
   user_service:
