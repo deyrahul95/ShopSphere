@@ -1,4 +1,4 @@
-namespace NotificationService.Constants;
+namespace Shared.Contracts.Constants;
 
 public class MassTransitConstants
 {
