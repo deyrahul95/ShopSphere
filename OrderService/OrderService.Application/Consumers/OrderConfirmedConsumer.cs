@@ -4,13 +4,11 @@ using OrderService.Application.Models;
 using OrderService.Application.Services.Interfaces;
 using OrderService.Domain.Enums;
 using Shared.Contracts.Events.Order;
-using Shared.Contracts.Events.Payment;
 
 namespace OrderService.Application.Consumers;
 
 public class OrderConfirmedConsumer(
     IOrdersService ordersService,
-    IPublishEndpoint publishEndpoint,
     ILogger<OrderConfirmedConsumer> logger) : IConsumer<OrderConfirmedEvent>
 {
     public async Task Consume(ConsumeContext<OrderConfirmedEvent> context)
@@ -23,10 +21,6 @@ public class OrderConfirmedConsumer(
                 PaymentState: OrderPaymentStatus.Unpaid);
 
             await ordersService.UpdateOrderStatus(userId: context.Message.UserId, request: request);
-
-            await publishEndpoint.Publish(new PaymentInitiatedEvent(
-                OrderId: context.Message.OrderId,
-                UserId: context.Message.UserId));
         }
         catch (Exception ex)
         {

@@ -13,6 +13,7 @@ using OrderService.Application.Models;
 using OrderService.Application.Services;
 using OrderService.Application.Services.Interfaces;
 using Polly;
+using Shared.Contracts.Constants;
 
 namespace OrderService.Application.Extensions;
 
@@ -28,22 +29,12 @@ public static class ServiceConfigurations
 
         services.AddMassTransit(x =>
         {
-            x.AddConsumer<OrderCreatedConsumer>(
-                cfg => cfg.UseMessageRetry(r => r.Interval(
-                    MassTransitConstants.MaxRetryCount,
-                    TimeSpan.FromSeconds(MassTransitConstants.RetryTimeSpanInSecond))));
-
             x.AddConsumer<OrderConfirmedConsumer>(
                 cfg => cfg.UseMessageRetry(r => r.Interval(
                     MassTransitConstants.MaxRetryCount,
                     TimeSpan.FromSeconds(MassTransitConstants.RetryTimeSpanInSecond))));
 
             x.AddConsumer<OrderCancelledConsumer>(
-                cfg => cfg.UseMessageRetry(r => r.Interval(
-                    MassTransitConstants.MaxRetryCount,
-                    TimeSpan.FromSeconds(MassTransitConstants.RetryTimeSpanInSecond))));
-
-            x.AddConsumer<PaymentInitiatedConsumer>(
                 cfg => cfg.UseMessageRetry(r => r.Interval(
                     MassTransitConstants.MaxRetryCount,
                     TimeSpan.FromSeconds(MassTransitConstants.RetryTimeSpanInSecond))));
@@ -55,6 +46,20 @@ public static class ServiceConfigurations
                     h.Username(MassTransitConstants.RabbitMqDefaultUser);
                     h.Password(MassTransitConstants.RabbitMqDefaultPassword);
                 });
+
+                cfg.ReceiveEndpoint(MassTransitConstants.NotificationQueueName, ep =>
+               {
+                   ep.ConfigureConsumer<OrderConfirmedConsumer>(context);
+                   ep.ConfigureConsumer<OrderCancelledConsumer>(context);
+
+                   ep.UseMessageRetry(
+                       r => r.Interval(
+                           MassTransitConstants.MaxRetryCount,
+                           TimeSpan.FromSeconds(MassTransitConstants.RetryTimeSpanInSecond)));
+                   ep.UseInMemoryOutbox(context);
+
+                   ep.DeadLetterExchange = MassTransitConstants.DeadLetterExchangeName;
+               });
             });
         });
 
