@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartService.Application", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartService.API", "CartService.API\CartService.API.csproj", "{BF532BFF-3ADA-475F-99B4-CBCBA365CC22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Contracts", "..\Shared\Shared.Contracts\Shared.Contracts.csproj", "{27163076-7A60-43C5-8AC2-E7CB5205A029}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{BF532BFF-3ADA-475F-99B4-CBCBA365CC22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF532BFF-3ADA-475F-99B4-CBCBA365CC22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF532BFF-3ADA-475F-99B4-CBCBA365CC22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27163076-7A60-43C5-8AC2-E7CB5205A029}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27163076-7A60-43C5-8AC2-E7CB5205A029}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27163076-7A60-43C5-8AC2-E7CB5205A029}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27163076-7A60-43C5-8AC2-E7CB5205A029}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

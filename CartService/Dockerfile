@@ -5,15 +5,23 @@ EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY CartService.sln ./
-COPY CartService.API/CartService.API.csproj ./CartService.API/
-COPY CartService.Application/CartService.Application.csproj ./CartService.Application/
-COPY CartService.Domain/CartService.Domain.csproj ./CartService.Domain/
-COPY CartService.Infrastructure/CartService.Infrastructure.csproj ./CartService.Infrastructure/
+
+COPY CartService/CartService.sln ./CartService/
+COPY CartService/CartService.API/CartService.API.csproj ./CartService/CartService.API/
+COPY CartService/CartService.Application/CartService.Application.csproj ./CartService/CartService.Application/
+COPY CartService/CartService.Domain/CartService.Domain.csproj ./CartService/CartService.Domain/
+COPY CartService/CartService.Infrastructure/CartService.Infrastructure.csproj ./CartService/CartService.Infrastructure/
+COPY Shared/Shared.Contracts/Shared.Contracts.csproj ./Shared/Shared.Contracts/
+
+WORKDIR /src/CartService
 RUN dotnet restore
-COPY . .
-WORKDIR /src/CartService.API
-RUN dotnet publish CartService.API.csproj -c Release -o /app/publish --no-restore
+
+WORKDIR /src
+COPY CartService/ ./CartService/
+COPY Shared/ ./Shared/
+
+WORKDIR /src/CartService/CartService.API
+RUN dotnet publish CartService.API.csproj -c Release -o /app/publish
 
 
 FROM base AS final
