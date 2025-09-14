@@ -10,14 +10,6 @@ if [ ! -f "$VERSION_FILE" ]; then
     echo "0.0.0" > "$VERSION_FILE"
 fi
 
-# Increment patch version
-increment_version() {
-    local v=$1
-    IFS='.' read -r -a parts <<< "$v"
-    parts[2]=$((parts[2] + 1))
-    echo "${parts[0]}.${parts[1]}.${parts[2]}"
-}
-
 CURRENT_VERSION=$(cat "$VERSION_FILE")
 
 # Remove old versioned images 
@@ -26,6 +18,12 @@ for SERVICE in $SERVICES; do
     IMAGE_SERVICE_NAME="${SERVICE//_/-}"
     
     OLD_IMAGE="$IMAGE_PREFIX-$IMAGE_SERVICE_NAME:$CURRENT_VERSION"
+    if docker image inspect "$OLD_IMAGE" > /dev/null 2>&1; then
+        echo "🗑️ Removing old image: $OLD_IMAGE"
+        docker rmi "$OLD_IMAGE"
+    fi
+
+    OLD_IMAGE="$IMAGE_PREFIX-$IMAGE_SERVICE_NAME:latest"
     if docker image inspect "$OLD_IMAGE" > /dev/null 2>&1; then
         echo "🗑️ Removing old image: $OLD_IMAGE"
         docker rmi "$OLD_IMAGE"
