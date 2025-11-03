@@ -12,6 +12,9 @@ fi
 
 CURRENT_VERSION=$(cat "$VERSION_FILE")
 
+# Stop and remove current running container
+docker-compose down;
+
 # Remove old versioned images 
 SERVICES=$(docker-compose config --services)
 for SERVICE in $SERVICES; do

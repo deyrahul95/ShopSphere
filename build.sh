@@ -34,6 +34,9 @@ increment_version() {
     echo "$major.$minor.$patch"
 }
 
+# Stop and remove current running container
+docker-compose down;
+
 CURRENT_VERSION=$(cat "$VERSION_FILE")
 NEW_VERSION=$(increment_version "$CURRENT_VERSION")
 echo "🔧 Building version: $NEW_VERSION"
